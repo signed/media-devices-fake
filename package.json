@@ -1,0 +1,7 @@
+{
+  "name": "media-devices-fake",
+  "version": "0.1.0",
+  "description": "A interactive fake implementation of MediaDevices interface in the browser for testing",
+  "main": "lib/cjs/index.js",
+  "license": "MIT"
+}
