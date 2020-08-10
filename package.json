@@ -1,10 +1,16 @@
 {
-  "name": "media-devices-fake",
+  "name": "@signed/media-devices-fake",
   "version": "0.1.0",
   "description": "A interactive fake implementation of MediaDevices interface in the browser for testing",
   "main": "lib/cjs/index.js",
+  "module": "lib/esm/index.js",
+  "files": [
+    "lib"
+  ],
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "rimraf ./lib && tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
+    "prepublishOnly": "yarn build"
   },
   "license": "MIT",
   "devDependencies": {
@@ -14,6 +20,7 @@
     "jest": "26.3.0",
     "jest-environment-jsdom-sixteen": "1.0.3",
     "jest-extended": "0.11.5",
+    "rimraf": "3.0.2",
     "typescript": "3.9.7"
   },
   "jest": {
