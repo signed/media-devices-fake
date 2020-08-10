@@ -3,5 +3,20 @@
   "version": "0.1.0",
   "description": "A interactive fake implementation of MediaDevices interface in the browser for testing",
   "main": "lib/cjs/index.js",
-  "license": "MIT"
+  "scripts": {
+    "test": "jest"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/preset-env": "7.11.0",
+    "@babel/preset-typescript": "7.10.4",
+    "@types/jest": "26.0.9",
+    "jest": "26.3.0",
+    "jest-environment-jsdom-sixteen": "1.0.3",
+    "jest-extended": "0.11.5",
+    "typescript": "3.9.7"
+  },
+  "jest": {
+    "testEnvironment": "jest-environment-jsdom-sixteen"
+  }
 }
