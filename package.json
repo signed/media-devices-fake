@@ -1,6 +1,6 @@
 {
   "name": "@signed/media-devices-fake",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A interactive fake implementation of MediaDevices interface in the browser for testing",
   "main": "lib/cjs/index.js",
   "module": "lib/esm/index.js",
