@@ -1,1 +1,1 @@
-export type  { MediaDevicesFake } from './MediaDevicesFake';
+export { MediaDevicesFake } from './MediaDevicesFake';
