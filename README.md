@@ -5,5 +5,5 @@ tbd
 
 ## How to release a new version
 ```
-yarn publish --new-version 0.0.4
+yarn publish --registry http://localhost:4873 --new-version 0.0.8
 ```
