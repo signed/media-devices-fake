@@ -9,15 +9,6 @@ type DeviceChangeListener = (this: MediaDevices, ev: Event) => any
 
 const deviceMatching = (description: MediaDeviceDescription) => (device: MediaDeviceInfoFake) => device.deviceId === description.deviceId && device.groupId === description.groupId;
 
-export const uuidV4 = () => {
-    let dt = new Date().getTime();
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        const r = (dt + Math.random() * 16) % 16 | 0;
-        dt = Math.floor(dt / 16);
-        return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-    });
-};
-
 const toMediaDeviceDescription = (device: MediaDeviceInfoFake): MediaDeviceDescription => ({ deviceId: device.deviceId, groupId: device.groupId, label: device.label, kind: device.kind });
 
 const positiveNumericNonRequiredConstraint = ['height', 'width', 'frameRate', 'aspectRatio', 'sampleRate'] as const;

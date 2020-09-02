@@ -1,5 +1,5 @@
-import { uuidV4 } from './MediaDevicesFake';
 import { notImplemented } from './not-implemented';
+import { uuidV4 } from './uuid';
 
 type MediaStreamTrackEventListener = (this: MediaStreamTrack, ev: Event) => any
 export type TrackKind = 'audio' | 'video'
