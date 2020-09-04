@@ -78,16 +78,15 @@ const trackConstraintsFrom = (constraints: MediaStreamConstraints): { mediaTrack
         };
     }
     if (constraints.audio) {
-        if (constraints.video) {
-            const mediaTrackConstraints = constraints.video;
-            const trackKind = 'audio';
-            const deviceKind = 'audioinput';
-            return {
-                mediaTrackConstraints,
-                trackKind,
-                deviceKind
-            };
-        }
+
+        const mediaTrackConstraints = constraints.audio;
+        const trackKind = 'audio';
+        const deviceKind = 'audioinput';
+        return {
+            mediaTrackConstraints,
+            trackKind,
+            deviceKind
+        };
     }
 
     throw new Error('with the current assumptions this should not happen');

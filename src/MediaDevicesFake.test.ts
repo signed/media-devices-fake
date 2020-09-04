@@ -22,6 +22,10 @@ const anyCamera = (override: Partial<Omit<MediaDeviceDescription, 'kind'>> = {})
     return anyDevice({ ...override, kind: 'videoinput' });
 };
 
+const anyMicrophone = (override: Partial<Omit<MediaDeviceDescription, 'kind'>> = {}): MediaDeviceDescription => {
+    return anyDevice({ ...override, kind: 'audioinput' });
+};
+
 const runAndReport = async (fake: MediaDevicesFake, scenario: Scenario) => {
     const stream = fake.getUserMedia(scenario.constraints);
     const checks = scenario.expected.granted?.checks ?? [];
@@ -195,12 +199,26 @@ describe('attach device', () => {
             const stream = await fake.getUserMedia({ video: { deviceId: 'attached' } });
             expect(stream).toBeDefined();
             expect(stream.getTracks()).toHaveLength(1);
-            const track = stream.getTracks()[0];
+            const track = stream.getVideoTracks()[0];
             expect(track.label).toBe('match')
             expect(track.id).toBeUuid();
             expect(track.enabled).toBe(true);
             expect(track.readyState).toBe('live');
             expect(track.kind).toBe('video');
+        });
+        test('return audioinput with matching device id', async () => {
+            fake.attach(anyMicrophone({ deviceId: 'not this one' }));
+            fake.attach(anyMicrophone({ deviceId: 'attached', label: 'match' }));
+            fake.attach(anyMicrophone({ deviceId: 'nope' }));
+            const stream = await fake.getUserMedia({ audio: { deviceId: 'attached' } });
+            expect(stream).toBeDefined();
+            expect(stream.getTracks()).toHaveLength(1);
+            const track = stream.getAudioTracks()[0];
+            expect(track.label).toBe('match')
+            expect(track.id).toBeUuid();
+            expect(track.enabled).toBe(true);
+            expect(track.readyState).toBe('live');
+            expect(track.kind).toBe('audio');
         });
     });
 });
