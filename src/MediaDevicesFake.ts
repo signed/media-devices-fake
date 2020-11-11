@@ -78,7 +78,6 @@ const trackConstraintsFrom = (constraints: MediaStreamConstraints): { mediaTrack
         };
     }
     if (constraints.audio) {
-
         const mediaTrackConstraints = constraints.audio;
         const trackKind = 'audio';
         const deviceKind = 'audioinput';
@@ -96,8 +95,8 @@ const trackConstraintsFrom = (constraints: MediaStreamConstraints): { mediaTrack
 const tryToOpenAStreamFor = (deferred: Deferred<MediaStream>, deviceKind: MediaDeviceKind, trackKind: TrackKind, mediaTrackConstraints: boolean | MediaTrackConstraints, allDevices: MediaDeviceInfoFake[]): void => {
     const devices = allDevices.filter(device => device.kind === deviceKind);
     if (devices.length === 0) {
-        deferred.reject(new DOMException('Requested device not found', 'NotFoundError'))
-        return
+        deferred.reject(new DOMException('Requested device not found', 'NotFoundError'));
+        return;
     }
     const selectedDevice = selectSettings(mediaTrackConstraints, devices);
     if (selectedDevice === undefined) {
@@ -109,12 +108,34 @@ const tryToOpenAStreamFor = (deferred: Deferred<MediaStream>, deviceKind: MediaD
     const mediaStream = new MediaStreamFake(mediaStreamId(), mediaTracks);
 
     deferred.resolve(mediaStream);
+};
+
+interface PermissionRequest {
+    deviceKind: MediaDeviceKind
+    granted: () => void
+}
+
+class UserConsentTracker {
+
+    requestPermissionFor(permissionRequest: PermissionRequest) {
+        if (this.permissionGrantedFor(permissionRequest.deviceKind)) {
+            permissionRequest.granted();
+            return
+        }
+        throw notImplemented('requestPermissionFor');
+    }
+
+    private permissionGrantedFor(deviceKind: MediaDeviceKind) {
+        // all the existing test assume that permissions have been granted
+        return true;
+    }
 }
 
 export class MediaDevicesFake implements MediaDevices {
     private readonly deviceChangeListeners: DeviceChangeListener [] = [];
     private readonly devices: MediaDeviceInfoFake [] = [];
     private _onDeviceChangeListener: DeviceChangeListener | null = null;
+    private _userConsentTracker = new UserConsentTracker();
 
     get ondevicechange(): DeviceChangeListener | null {
         return this._onDeviceChangeListener;
@@ -179,7 +200,12 @@ export class MediaDevicesFake implements MediaDevices {
         }
         const { mediaTrackConstraints, trackKind, deviceKind } = trackConstraintsFrom(constraints);
         const deferred = new Deferred<MediaStream>();
-        tryToOpenAStreamFor(deferred, deviceKind, trackKind, mediaTrackConstraints, this.devices)
+        this._userConsentTracker.requestPermissionFor({
+            deviceKind, granted: () => {
+                tryToOpenAStreamFor(deferred, deviceKind, trackKind, mediaTrackConstraints, this.devices);
+            }
+        });
+
         return deferred.promise;
     }
 
