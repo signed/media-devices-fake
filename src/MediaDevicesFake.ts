@@ -93,6 +93,24 @@ const trackConstraintsFrom = (constraints: MediaStreamConstraints): { mediaTrack
 
 };
 
+const tryToOpenAStreamFor = (deferred: Deferred<MediaStream>, deviceKind: MediaDeviceKind, trackKind: TrackKind, mediaTrackConstraints: boolean | MediaTrackConstraints, allDevices: MediaDeviceInfoFake[]): void => {
+    const devices = allDevices.filter(device => device.kind === deviceKind);
+    if (devices.length === 0) {
+        deferred.reject(new DOMException('Requested device not found', 'NotFoundError'))
+        return
+    }
+    const selectedDevice = selectSettings(mediaTrackConstraints, devices);
+    if (selectedDevice === undefined) {
+        throw notImplemented('should this be an over constrained error?');
+    }
+
+    const mediaTrack = new MediaStreamTrackFake(initialMediaStreamTrackProperties(selectedDevice.label, trackKind));
+    const mediaTracks = [mediaTrack];
+    const mediaStream = new MediaStreamFake(mediaStreamId(), mediaTracks);
+
+    deferred.resolve(mediaStream);
+}
+
 export class MediaDevicesFake implements MediaDevices {
     private readonly deviceChangeListeners: DeviceChangeListener [] = [];
     private readonly devices: MediaDeviceInfoFake [] = [];
@@ -160,21 +178,8 @@ export class MediaDevicesFake implements MediaDevices {
             throw notImplemented('at the moment there is no support to request audio and video at the same time');
         }
         const { mediaTrackConstraints, trackKind, deviceKind } = trackConstraintsFrom(constraints);
-
-        const devices = this.devices.filter(device => device.kind === deviceKind);
-        if (devices.length === 0) {
-            return Promise.reject(new DOMException('Requested device not found', 'NotFoundError'));
-        }
-        const selectedDevice = selectSettings(mediaTrackConstraints, devices);
-        if (selectedDevice === undefined) {
-            throw notImplemented('should this be an over constrained error?');
-        }
-
-        const mediaTrack = new MediaStreamTrackFake(initialMediaStreamTrackProperties(selectedDevice.label, trackKind));
-        const mediaTracks = [mediaTrack];
-
         const deferred = new Deferred<MediaStream>();
-        deferred.resolve(new MediaStreamFake(mediaStreamId(), mediaTracks));
+        tryToOpenAStreamFor(deferred, deviceKind, trackKind, mediaTrackConstraints, this.devices)
         return deferred.promise;
     }
 
