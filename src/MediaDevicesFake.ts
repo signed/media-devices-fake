@@ -134,8 +134,8 @@ class UserConsentTracker {
 export class MediaDevicesFake implements MediaDevices {
     private readonly deviceChangeListeners: DeviceChangeListener [] = [];
     private readonly devices: MediaDeviceInfoFake [] = [];
+    private readonly _userConsentTracker = new UserConsentTracker();
     private _onDeviceChangeListener: DeviceChangeListener | null = null;
-    private _userConsentTracker = new UserConsentTracker();
 
     get ondevicechange(): DeviceChangeListener | null {
         return this._onDeviceChangeListener;
