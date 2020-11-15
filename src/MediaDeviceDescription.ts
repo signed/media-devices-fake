@@ -1,5 +1,5 @@
 /**
- * Describes a media device that you an plug into the {@link MediaDevicesFake.attach}
+ * Describes a media device that you an plug in with {@link MediaDevicesFake.attach}
  */
 export interface MediaDeviceDescription {
     deviceId: string
