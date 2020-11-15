@@ -50,6 +50,16 @@ export type UserConsent = {
     microphone: PermissionState
 }
 
+const resultingPermissionStateFor = (action: PermissionPromptAction): PermissionState => {
+    if (action === PermissionPromptAction.Allow) {
+        return PermissionState.Allowed;
+    }
+    if (action === PermissionPromptAction.Block) {
+        return PermissionState.Blocked;
+    }
+    throw notImplemented(`action: ${action}`);
+};
+
 export class UserConsentTracker {
     private _pendingPermissionRequest: void | PermissionRequest = undefined;
 
@@ -57,12 +67,16 @@ export class UserConsentTracker {
     }
 
     requestPermissionFor(permissionRequest: PermissionRequest) {
+        if (this._pendingPermissionRequest) {
+            throw notImplemented('There is already a pending permission request, not sure if this can happen');
+        }
         if (this.permissionGrantedFor(permissionRequest.deviceKind)) {
             permissionRequest.granted();
             return;
         }
-        if (this._pendingPermissionRequest) {
-            throw notImplemented('There is already a pending permission request');
+        if (this.permissionBlockedFor(permissionRequest.deviceKind)) {
+            permissionRequest.blocked();
+            return;
         }
         this._pendingPermissionRequest = permissionRequest;
     }
@@ -77,15 +91,38 @@ export class UserConsentTracker {
         throw notImplemented(`permissionGrantedFor '${deviceKind}'`);
     }
 
+    private permissionBlockedFor(deviceKind: MediaDeviceKind) {
+        if (deviceKind === 'videoinput') {
+            return this._userConsent.camera === PermissionState.Blocked;
+        }
+        if (deviceKind === 'audioinput') {
+            return this._userConsent.microphone === PermissionState.Blocked;
+        }
+        throw notImplemented(`permissionGrantedFor '${deviceKind}'`);
+    }
+
+
     async deviceAccessPrompt(): Promise<PermissionPrompt> {
+        //TODO active poll for some time and reject delayed
         if (this._pendingPermissionRequest) {
-            const complete = () => this._pendingPermissionRequest = undefined;
+            const complete = (action: PermissionPromptAction): void => {
+                if (this._pendingPermissionRequest === undefined) {
+                    throw new Error('there is no pending permission request');
+                }
+                if (this._pendingPermissionRequest.deviceKind === 'audioinput') {
+                    this._userConsent.microphone = resultingPermissionStateFor(action);
+                }
+                if (this._pendingPermissionRequest.deviceKind === 'videoinput') {
+                    this._userConsent.camera = resultingPermissionStateFor(action);
+                }
+                this._pendingPermissionRequest = undefined;
+            };
             return Promise.resolve(this.permissionPromptFor(this._pendingPermissionRequest, complete));
         }
         return Promise.reject('Nobody asked for device access');
     }
 
-    private permissionPromptFor(permissionRequest: PermissionRequest, complete: () => undefined) {
+    private permissionPromptFor(permissionRequest: PermissionRequest, complete: (action: PermissionPromptAction) => void) {
         const requestedPermissions: RequestedMediaInput[] = [];
         if (permissionRequest.deviceKind === 'videoinput' && !this.permissionGrantedFor('videoinput')) {
             requestedPermissions.push(RequestedMediaInput.Camera);
@@ -99,14 +136,14 @@ export class UserConsentTracker {
             }
 
             takeAction(action: PermissionPromptAction): void {
-                complete();
+                complete(action);
                 if (action === PermissionPromptAction.Allow) {
-                    permissionRequest.granted()
-                    return
+                    permissionRequest.granted();
+                    return;
                 }
                 if (action === PermissionPromptAction.Block) {
-                    permissionRequest.blocked()
-                    return
+                    permissionRequest.blocked();
+                    return;
                 }
                 throw notImplemented(`takeAction '${action}'`);
             }
