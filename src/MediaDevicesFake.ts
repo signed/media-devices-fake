@@ -114,11 +114,9 @@ const tryToOpenAStreamFor = (deferred: Deferred<MediaStream>, deviceKind: MediaD
 export class MediaDevicesFake implements MediaDevices {
     private readonly deviceChangeListeners: DeviceChangeListener [] = [];
     private readonly devices: MediaDeviceInfoFake [] = [];
-    private readonly _userConsentTracker = new UserConsentTracker();
     private _onDeviceChangeListener: DeviceChangeListener | null = null;
 
-    constructor(userConsentTracker: UserConsentTracker) {
-        this._userConsentTracker = userConsentTracker;
+    constructor(private readonly _userConsentTracker: UserConsentTracker) {
     }
 
 
