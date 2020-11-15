@@ -184,11 +184,14 @@ export class MediaDevicesFake implements MediaDevices {
         const { mediaTrackConstraints, trackKind, deviceKind } = trackConstraintsFrom(constraints);
         const deferred = new Deferred<MediaStream>();
         this._userConsentTracker.requestPermissionFor({
-            deviceKind, granted: () => {
+            deviceKind,
+            granted: () => {
                 tryToOpenAStreamFor(deferred, deviceKind, trackKind, mediaTrackConstraints, this.devices);
+            },
+            blocked: () => {
+                deferred.reject(new DOMException('Permission denied', 'NotAllowedError'))
             }
         });
-
         return deferred.promise;
     }
 

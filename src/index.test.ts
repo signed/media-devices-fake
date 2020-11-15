@@ -1,5 +1,6 @@
 import { MediaDevicesFake } from './MediaDevicesFake';
 import { allPermissionsGranted, PermissionPromptAction, RequestedMediaInput, stillHaveToAskForDeviceAccess } from './UserConsentTracker';
+import './matchers/dom-exception';
 
 describe('MediaDevicesFake', () => {
     describe('device access granted', () => {
@@ -32,6 +33,24 @@ describe('MediaDevicesFake', () => {
             expect(permissionPrompt.requestedPermissions()).toEqual([RequestedMediaInput.Camera])
             permissionPrompt.takeAction(PermissionPromptAction.Allow)
             expect((await userMediaPromise).getVideoTracks()[0].label).toEqual('The Camera');
+        });
+
+        test('reject promise with a <Exception> after blocking access', async () => {
+            const userConsentTracker = stillHaveToAskForDeviceAccess();
+            const mediaDevicesFake = new MediaDevicesFake(userConsentTracker);
+            mediaDevicesFake.attach({
+                deviceId: 'the camera identifier',
+                groupId: 'any group identifier',
+                kind: 'videoinput',
+                label: 'The Camera'
+            });
+
+            const userMediaPromise = mediaDevicesFake.getUserMedia({ video: true });
+            const permissionPrompt = await userConsentTracker.deviceAccessPrompt();
+            expect(permissionPrompt.requestedPermissions()).toEqual([RequestedMediaInput.Camera])
+
+            permissionPrompt.takeAction(PermissionPromptAction.Block)
+            await expect(userMediaPromise).rejects.domException('Permission denied', 'NotAllowedError');
         });
     });
 });

@@ -35,6 +35,7 @@ export interface PermissionPrompt {
 export interface PermissionRequest {
     deviceKind: MediaDeviceKind
     granted: () => void
+    blocked: () => void;
 }
 
 
@@ -103,7 +104,11 @@ export class UserConsentTracker {
                     permissionRequest.granted()
                     return
                 }
-                throw notImplemented(`takeAction '${action}'`)
+                if (action === PermissionPromptAction.Block) {
+                    permissionRequest.blocked()
+                    return
+                }
+                throw notImplemented(`takeAction '${action}'`);
             }
         }();
     }
