@@ -5,6 +5,7 @@ import './matchers/to-be-uuid';
 import './matchers/to-include-video-track';
 import './matchers/dom-exception';
 import 'jest-extended'
+import { allPermissionsGranted } from './UserConsentTracker';
 
 // this looks interesting
 // https://github.com/fippo/dynamic-getUserMedia/blob/master/content.js
@@ -49,7 +50,7 @@ const runAndReport = async (fake: MediaDevicesFake, scenario: Scenario) => {
 describe('attach device', () => {
     let fake: MediaDevicesFake;
     beforeEach(() => {
-        fake = new MediaDevicesFake();
+        fake = new MediaDevicesFake(allPermissionsGranted());
     });
 
     describe('attach', () => {

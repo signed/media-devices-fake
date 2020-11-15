@@ -4,6 +4,7 @@ import { MediaDeviceInfoFake } from './MediaDeviceInfoFake';
 import { MediaStreamFake, mediaStreamId } from './MediaStreamFake';
 import { initialMediaStreamTrackProperties, MediaStreamTrackFake, TrackKind } from './MediaStreamTrackFake';
 import { notImplemented } from './not-implemented';
+import { UserConsentTracker } from './UserConsentTracker';
 
 type DeviceChangeListener = (this: MediaDevices, ev: Event) => any
 
@@ -110,32 +111,16 @@ const tryToOpenAStreamFor = (deferred: Deferred<MediaStream>, deviceKind: MediaD
     deferred.resolve(mediaStream);
 };
 
-interface PermissionRequest {
-    deviceKind: MediaDeviceKind
-    granted: () => void
-}
-
-class UserConsentTracker {
-
-    requestPermissionFor(permissionRequest: PermissionRequest) {
-        if (this.permissionGrantedFor(permissionRequest.deviceKind)) {
-            permissionRequest.granted();
-            return
-        }
-        throw notImplemented('requestPermissionFor');
-    }
-
-    private permissionGrantedFor(deviceKind: MediaDeviceKind) {
-        // all the existing test assume that permissions have been granted
-        return true;
-    }
-}
-
 export class MediaDevicesFake implements MediaDevices {
     private readonly deviceChangeListeners: DeviceChangeListener [] = [];
     private readonly devices: MediaDeviceInfoFake [] = [];
     private readonly _userConsentTracker = new UserConsentTracker();
     private _onDeviceChangeListener: DeviceChangeListener | null = null;
+
+    constructor(userConsentTracker: UserConsentTracker) {
+        this._userConsentTracker = userConsentTracker;
+    }
+
 
     get ondevicechange(): DeviceChangeListener | null {
         return this._onDeviceChangeListener;
