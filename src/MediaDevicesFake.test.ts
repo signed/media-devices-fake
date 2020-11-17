@@ -133,11 +133,9 @@ describe('attach device', () => {
                 const stream = fake.getUserMedia();
                 return expect(stream).rejects.toThrow(new TypeError(`Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested`));
             });
-
             test('scenario', async () => {
                 expect(await runAndReport(fake, passUndefined)).toBe('');
             });
-
         });
 
         describe('all passed constraints are false', () => {
@@ -145,7 +143,6 @@ describe('attach device', () => {
                 const stream = fake.getUserMedia(allConstraintsFalse.constraints);
                 return expect(stream).rejects.toThrow(new TypeError(`Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested`));
             });
-
             test('scenario', async () => {
                 expect(await runAndReport(fake, allConstraintsFalse)).toBe('');
             });
@@ -156,7 +153,6 @@ describe('attach device', () => {
                 const stream = fake.getUserMedia(requestedDeviceTypeNotAttached.constraints);
                 await expect(stream).rejects.domException(`Requested device not found`, 'NotFoundError');
             });
-
             test('scenario', async () => {
                 expect(await runAndReport(fake, requestedDeviceTypeNotAttached)).toBe('');
             });
