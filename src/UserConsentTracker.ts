@@ -147,7 +147,7 @@ export class UserConsentTracker {
         if (permissionRequest.deviceKind === 'videoinput' && !this.permissionGrantedFor('videoinput')) {
             requestedPermissions.push(RequestedMediaInput.Camera);
         }
-        if (permissionRequest.deviceKind === 'audioinput' && !this.permissionGrantedFor('audiooutput')) {
+        if (permissionRequest.deviceKind === 'audioinput' && !this.permissionGrantedFor('audioinput')) {
             requestedPermissions.push(RequestedMediaInput.Microphone);
         }
         return new class implements PermissionPrompt {
