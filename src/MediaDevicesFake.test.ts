@@ -1,31 +1,11 @@
 import 'jest-extended';
+import { anyCamera, anyDevice, anyMicrophone } from './DeviceMother';
 import './matchers/dom-exception';
 import './matchers/to-be-uuid';
 import './matchers/to-include-video-track';
-import { MediaDeviceDescription } from './MediaDeviceDescription';
 import { MediaDevicesFake } from './MediaDevicesFake';
 import { allConstraintsFalse, noDeviceWithDeviceId, passUndefined, requestedDeviceTypeNotAttached, Scenario } from './Scenarios';
 import { allPermissionsGranted, stillHaveToAskForDeviceAccess } from './UserConsentTracker';
-
-// this looks interesting
-// https://github.com/fippo/dynamic-getUserMedia/blob/master/content.js
-const anyDevice = (override: Partial<MediaDeviceDescription> = {}): MediaDeviceDescription => {
-    return {
-        deviceId: 'camera-device-id',
-        groupId: 'camera-group-id',
-        kind: 'videoinput',
-        label: 'Acme camera (HD)',
-        ...override
-    };
-};
-
-const anyCamera = (override: Partial<Omit<MediaDeviceDescription, 'kind'>> = {}): MediaDeviceDescription => {
-    return anyDevice({ ...override, kind: 'videoinput' });
-};
-
-const anyMicrophone = (override: Partial<Omit<MediaDeviceDescription, 'kind'>> = {}): MediaDeviceDescription => {
-    return anyDevice({ ...override, kind: 'audioinput' });
-};
 
 const runAndReport = async (fake: MediaDevicesFake, scenario: Scenario) => {
     const stream = fake.getUserMedia(scenario.constraints);

@@ -108,6 +108,8 @@ const tryToOpenAStreamFor = (deferred: Deferred<MediaStream>, deviceKind: MediaD
     deferred.resolve(mediaStream);
 };
 
+// this looks interesting
+// https://github.com/fippo/dynamic-getUserMedia/blob/master/content.js
 export class MediaDevicesFake implements MediaDevices {
     private readonly deviceChangeListeners: DeviceChangeListener [] = [];
     private readonly _deviceDescriptions: MediaDeviceDescription [] = [];

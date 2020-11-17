@@ -1,5 +1,6 @@
 export { MediaDevicesFake } from './MediaDevicesFake';
 export { MediaDeviceDescription } from './MediaDeviceDescription';
+export { anyMicrophone, anyCamera, anyDevice } from './DeviceMother';
 
 // todo testrig should be moved here
 export { MediaStreamCheckResult, Scenario } from './Scenarios';
