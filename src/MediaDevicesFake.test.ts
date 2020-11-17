@@ -220,7 +220,7 @@ describe('attach device', () => {
     });
 });
 
-describe('permission', () => {
+describe('enumerateDevices', () => {
     describe('still have to ask for device access', () => {
         test('label and deviceId in MediaDeviceInfo is set to empty string', async () => {
             const fake = new MediaDevicesFake(stillHaveToAskForDeviceAccess());
