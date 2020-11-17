@@ -1,3 +1,4 @@
+import { Deferred } from './Deffered';
 import { notImplemented } from './not-implemented';
 
 
@@ -100,25 +101,45 @@ export class UserConsentTracker {
         throw notImplemented(`permissionGrantedFor '${deviceKind}'`);
     }
 
-
+    //todo add an override for the wait time and poll interval
     async deviceAccessPrompt(): Promise<PermissionPrompt> {
-        //TODO active poll for some time and reject delayed
-        if (this._pendingPermissionRequest) {
-            const complete = (action: PermissionPromptAction): void => {
-                if (this._pendingPermissionRequest === undefined) {
-                    throw new Error('there is no pending permission request');
-                }
-                if (this._pendingPermissionRequest.deviceKind === 'audioinput') {
-                    this._userConsent.microphone = resultingPermissionStateFor(action);
-                }
-                if (this._pendingPermissionRequest.deviceKind === 'videoinput') {
-                    this._userConsent.camera = resultingPermissionStateFor(action);
-                }
-                this._pendingPermissionRequest = undefined;
-            };
-            return Promise.resolve(this.permissionPromptFor(this._pendingPermissionRequest, complete));
-        }
-        return Promise.reject('Nobody asked for device access');
+        const deferred = new Deferred<PermissionPrompt>();
+        const maximumWaitTime = 1000;
+        const pollInterval = 100;
+        let timeWaited = 0;
+
+        let pollForPendingPermissionRequest = () => {
+            if (this._pendingPermissionRequest) {
+                const complete = (action: PermissionPromptAction): void => {
+                    if (this._pendingPermissionRequest === undefined) {
+                        throw new Error('there is no pending permission request');
+                    }
+                    if (this._pendingPermissionRequest.deviceKind === 'audioinput') {
+                        this._userConsent.microphone = resultingPermissionStateFor(action);
+                    }
+                    if (this._pendingPermissionRequest.deviceKind === 'videoinput') {
+                        this._userConsent.camera = resultingPermissionStateFor(action);
+                    }
+                    this._pendingPermissionRequest = undefined;
+                };
+                const value = this.permissionPromptFor(this._pendingPermissionRequest, complete);
+                deferred.resolve(value)
+                return;
+            }
+            if (timeWaited >= maximumWaitTime) {
+                deferred.reject(new Error(`After waiting for ${maximumWaitTime} ms there still is no pending permission request`))
+                return
+            }
+            timeWaited += pollInterval;
+            // TODO add scheduler abstraction to encapsulate window access
+            window.setTimeout(pollForPendingPermissionRequest, pollInterval);
+        };
+        pollForPendingPermissionRequest()
+
+
+        // check with the Permission Manager if permissions where already rejected
+        // check if there was a request for media
+        return deferred.promise;
     }
 
     private permissionPromptFor(permissionRequest: PermissionRequest, complete: (action: PermissionPromptAction) => void) {
