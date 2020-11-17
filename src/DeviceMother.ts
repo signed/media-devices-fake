@@ -2,10 +2,10 @@ import { MediaDeviceDescription } from './MediaDeviceDescription';
 
 export const anyDevice = (override: Partial<MediaDeviceDescription> = {}): MediaDeviceDescription => {
     return {
-        deviceId: 'camera-device-id',
-        groupId: 'camera-group-id',
+        deviceId: 'stand-in-device-id',
+        groupId: 'stand-in-group-id',
         kind: 'videoinput',
-        label: 'Acme camera (HD)',
+        label: 'Acme Device (HD)',
         ...override
     };
 };
