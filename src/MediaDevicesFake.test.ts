@@ -5,7 +5,7 @@ import './matchers/to-include-video-track';
 import { MediaDeviceDescription } from './MediaDeviceDescription';
 import { MediaDevicesFake } from './MediaDevicesFake';
 import { allConstraintsFalse, noDeviceWithDeviceId, passUndefined, requestedDeviceTypeNotAttached, Scenario } from './Scenarios';
-import { allPermissionsGranted, PermissionState, UserConsentTracker } from './UserConsentTracker';
+import { allPermissionsGranted, stillHaveToAskForDeviceAccess } from './UserConsentTracker';
 
 // this looks interesting
 // https://github.com/fippo/dynamic-getUserMedia/blob/master/content.js
@@ -220,15 +220,12 @@ describe('attach device', () => {
     });
 });
 
-describe('permissions', () => {
-    describe('ask', () => {
+describe('permission', () => {
+    describe('still have to ask for device access', () => {
         test('label and deviceId in MediaDeviceInfo is set to empty string', async () => {
-            const fake = new MediaDevicesFake(new UserConsentTracker({
-                camera: PermissionState.Ask,
-                microphone: PermissionState.Ask
-            }));
-            fake.attach(anyMicrophone({label: 'The microphone', deviceId: 'microphone identifier'}))
-            const devices = await fake.enumerateDevices()
+            const fake = new MediaDevicesFake(stillHaveToAskForDeviceAccess());
+            fake.attach(anyMicrophone({ label: 'The microphone', deviceId: 'microphone identifier' }));
+            const devices = await fake.enumerateDevices();
             const microphone = devices[0];
             expect(microphone.label).toEqual('');
             expect(microphone.deviceId).toEqual('');
