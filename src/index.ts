@@ -1,7 +1,7 @@
 export { MediaDevicesFake } from './MediaDevicesFake';
 export { MediaDeviceDescription } from './MediaDeviceDescription';
 export { anyMicrophone, anyCamera, anyDevice } from './DeviceMother';
-export { PermissionPrompt, PermissionPromptAction } from './UserConsentTracker';
+export { PermissionPrompt, PermissionPromptAction, RequestedMediaInput } from './UserConsentTracker';
 
 // todo testrig should be moved here
 export { MediaStreamCheckResult, Scenario } from './Scenarios';

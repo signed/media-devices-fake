@@ -1,7 +1,7 @@
-import { MediaDevicesFake } from './MediaDevicesFake';
-import { allPermissionsGranted, PermissionPromptAction, RequestedMediaInput, stillHaveToAskForDeviceAccess } from './UserConsentTracker';
+import { PermissionPromptAction, RequestedMediaInput, MediaDevicesFake } from './index';
 import './matchers/dom-exception';
 import './matchers/to-include-video-track';
+import { allPermissionsGranted, stillHaveToAskForDeviceAccess } from './UserConsentTracker';
 
 describe('MediaDevicesFake', () => {
     describe('device access granted', () => {
