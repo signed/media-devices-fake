@@ -117,7 +117,17 @@ export class MediaDevicesFake implements MediaDevices {
     }
 
     private get devices(): MediaDeviceInfoFake [] {
-        return this._deviceDescriptions.map(description => new MediaDeviceInfoFake(description));
+        return this._deviceDescriptions.map(description => {
+            const {kind} = description;
+            const accessAllowed = this._userConsentTracker.accessAllowedFor(kind);
+            const deviceId = accessAllowed ? description.deviceId : '';
+            const label = accessAllowed ? description.label : '';
+            return {
+                ...description,
+                deviceId,
+                label
+            };
+        }).map(description => new MediaDeviceInfoFake(description));
     }
 
     get ondevicechange(): DeviceChangeListener | null {

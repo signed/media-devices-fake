@@ -38,8 +38,7 @@ export interface PermissionRequest {
     blocked: () => void;
 }
 
-
-enum PermissionState {
+export enum PermissionState {
     Ask = 'Ask',
     Allowed = 'Allowed',
     Blocked = 'Blocked',
@@ -148,6 +147,16 @@ export class UserConsentTracker {
                 throw notImplemented(`takeAction '${action}'`);
             }
         }();
+    }
+
+    accessAllowedFor(kind: MediaDeviceKind):boolean {
+        if (kind === 'audioinput') {
+            return this._userConsent.microphone === PermissionState.Allowed
+        }
+        if (kind === 'videoinput') {
+            return this._userConsent.camera === PermissionState.Allowed;
+        }
+        throw notImplemented(`not sure how to implement this for ${kind}`);
     }
 }
 

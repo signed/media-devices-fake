@@ -1,11 +1,11 @@
-import { MediaDeviceDescription } from './MediaDeviceDescription';
-import { MediaDevicesFake } from './MediaDevicesFake';
-import { allConstraintsFalse, passUndefined, Scenario, requestedDeviceTypeNotAttached, noDeviceWithDeviceId } from './Scenarios';
+import 'jest-extended';
+import './matchers/dom-exception';
 import './matchers/to-be-uuid';
 import './matchers/to-include-video-track';
-import './matchers/dom-exception';
-import 'jest-extended'
-import { allPermissionsGranted } from './UserConsentTracker';
+import { MediaDeviceDescription } from './MediaDeviceDescription';
+import { MediaDevicesFake } from './MediaDevicesFake';
+import { allConstraintsFalse, noDeviceWithDeviceId, passUndefined, requestedDeviceTypeNotAttached, Scenario } from './Scenarios';
+import { allPermissionsGranted, PermissionState, UserConsentTracker } from './UserConsentTracker';
 
 // this looks interesting
 // https://github.com/fippo/dynamic-getUserMedia/blob/master/content.js
@@ -165,13 +165,13 @@ describe('attach device', () => {
 
         describe('reject promise in case no videoinput device is attached', () => {
             test('reject promise in case no videoinput device is attached', () => {
-                fake.noDevicesAttached()
+                fake.noDevicesAttached();
                 const stream = fake.getUserMedia(requestedDeviceTypeNotAttached.constraints);
                 return expect(stream).rejects.toThrow(new DOMException('Requested device not found'));
             });
             test('scenario', async () => {
-                fake.noDevicesAttached()
-                expect(await runAndReport(fake, requestedDeviceTypeNotAttached)).toBe('')
+                fake.noDevicesAttached();
+                expect(await runAndReport(fake, requestedDeviceTypeNotAttached)).toBe('');
             });
         });
 
@@ -184,8 +184,8 @@ describe('attach device', () => {
 
         describe('return another device of the same kind in case no device with the given id is attached', () => {
             test('scenario', async () => {
-                fake.attach(anyCamera({deviceId: 'actually connected'}))
-                expect(await runAndReport(fake, noDeviceWithDeviceId)).toBe('')
+                fake.attach(anyCamera({ deviceId: 'actually connected' }));
+                expect(await runAndReport(fake, noDeviceWithDeviceId)).toBe('');
             });
         });
 
@@ -197,7 +197,7 @@ describe('attach device', () => {
             expect(stream).toBeDefined();
             expect(stream.getTracks()).toHaveLength(1);
             const track = stream.getVideoTracks()[0];
-            expect(track.label).toBe('match')
+            expect(track.label).toBe('match');
             expect(track.id).toBeUuid();
             expect(track.enabled).toBe(true);
             expect(track.readyState).toBe('live');
@@ -211,11 +211,27 @@ describe('attach device', () => {
             expect(stream).toBeDefined();
             expect(stream.getTracks()).toHaveLength(1);
             const track = stream.getAudioTracks()[0];
-            expect(track.label).toBe('match')
+            expect(track.label).toBe('match');
             expect(track.id).toBeUuid();
             expect(track.enabled).toBe(true);
             expect(track.readyState).toBe('live');
             expect(track.kind).toBe('audio');
+        });
+    });
+});
+
+describe('permissions', () => {
+    describe('ask', () => {
+        test('label and deviceId in MediaDeviceInfo is set to empty string', async () => {
+            const fake = new MediaDevicesFake(new UserConsentTracker({
+                camera: PermissionState.Ask,
+                microphone: PermissionState.Ask
+            }));
+            fake.attach(anyMicrophone({label: 'The microphone', deviceId: 'microphone identifier'}))
+            const devices = await fake.enumerateDevices()
+            const microphone = devices[0];
+            expect(microphone.label).toEqual('');
+            expect(microphone.deviceId).toEqual('');
         });
     });
 });
