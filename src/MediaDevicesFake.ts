@@ -7,10 +7,7 @@ import { notImplemented } from './not-implemented';
 import { UserConsentTracker } from './UserConsentTracker';
 
 type DeviceChangeListener = (this: MediaDevices, ev: Event) => any
-
-const deviceMatching = (description: MediaDeviceDescription) => (device: MediaDeviceInfoFake) => device.deviceId === description.deviceId && device.groupId === description.groupId;
-
-const toMediaDeviceDescription = (device: MediaDeviceInfoFake): MediaDeviceDescription => ({ deviceId: device.deviceId, groupId: device.groupId, label: device.label, kind: device.kind });
+const descriptionMatching = (description: MediaDeviceDescription) => (device: MediaDeviceDescription) => device.deviceId === description.deviceId && device.groupId === description.groupId;
 
 const positiveNumericNonRequiredConstraint = ['height', 'width', 'frameRate', 'aspectRatio', 'sampleRate'] as const;
 type PositiveNumericNonRequiredConstraintName = typeof positiveNumericNonRequiredConstraint[number];
@@ -113,12 +110,15 @@ const tryToOpenAStreamFor = (deferred: Deferred<MediaStream>, deviceKind: MediaD
 
 export class MediaDevicesFake implements MediaDevices {
     private readonly deviceChangeListeners: DeviceChangeListener [] = [];
-    private readonly devices: MediaDeviceInfoFake [] = [];
+    private readonly _deviceDescriptions: MediaDeviceDescription [] = [];
     private _onDeviceChangeListener: DeviceChangeListener | null = null;
 
     constructor(private readonly _userConsentTracker: UserConsentTracker) {
     }
 
+    private get devices(): MediaDeviceInfoFake [] {
+        return this._deviceDescriptions.map(description => new MediaDeviceInfoFake(description));
+    }
 
     get ondevicechange(): DeviceChangeListener | null {
         return this._onDeviceChangeListener;
@@ -162,7 +162,7 @@ export class MediaDevicesFake implements MediaDevices {
     }
 
     enumerateDevices(): Promise<MediaDeviceInfo[]> {
-        return Promise.resolve([...this.devices]);
+        return Promise.resolve(this.devices);
     }
 
     getSupportedConstraints(): MediaTrackSupportedConstraints {
@@ -189,32 +189,30 @@ export class MediaDevicesFake implements MediaDevices {
                 tryToOpenAStreamFor(deferred, deviceKind, trackKind, mediaTrackConstraints, this.devices);
             },
             blocked: () => {
-                deferred.reject(new DOMException('Permission denied', 'NotAllowedError'))
+                deferred.reject(new DOMException('Permission denied', 'NotAllowedError'));
             }
         });
         return deferred.promise;
     }
 
     public noDevicesAttached() {
-        this.devices.map(device => toMediaDeviceDescription(device))
-            .forEach(descriptor => this.remove(descriptor));
+        this._deviceDescriptions.forEach(descriptor => this.remove(descriptor));
     }
 
     public attach(toAdd: MediaDeviceDescription) {
-        if (this.devices.some(deviceMatching(toAdd))) {
+        if (this._deviceDescriptions.some(descriptionMatching(toAdd))) {
             throw notImplemented(`device with this description already attached
 ${JSON.stringify(toAdd, null, 2)}`);
         }
         // make a defensive copy to stop manipulation after attaching the device
-        const infoDefaultFake = new MediaDeviceInfoFake({ ...toAdd });
-        this.devices.push(infoDefaultFake);
+        this._deviceDescriptions.push({ ...toAdd });
         this.informDeviceChangeListener();
     }
 
     public remove(toRemove: MediaDeviceDescription) {
-        const index = this.devices.findIndex(deviceMatching(toRemove));
+        const index = this._deviceDescriptions.findIndex(descriptionMatching(toRemove));
         if (index >= 0) {
-            this.devices.splice(index, 1);
+            this._deviceDescriptions.splice(index, 1);
             this.informDeviceChangeListener();
         }
     }
