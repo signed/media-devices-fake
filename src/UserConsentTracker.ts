@@ -1,21 +1,6 @@
 import { Deferred } from './Deffered';
 import { notImplemented } from './not-implemented';
 
-
-export const allPermissionsGranted = () => {
-    return new UserConsentTracker({
-        camera: PermissionState.Allowed,
-        microphone: PermissionState.Allowed
-    });
-};
-
-export const stillHaveToAskForDeviceAccess = () => {
-    return new UserConsentTracker({
-        camera: PermissionState.Ask,
-        microphone: PermissionState.Ask
-    });
-};
-
 export enum RequestedMediaInput {
     Microphone = 'Microphone',
     Camera = 'Camera'

@@ -5,7 +5,21 @@ import './matchers/to-be-uuid';
 import './matchers/to-include-video-track';
 import { MediaDevicesFake } from './MediaDevicesFake';
 import { allConstraintsFalse, noDeviceWithDeviceId, passUndefined, requestedDeviceTypeNotAttached, Scenario } from './Scenarios';
-import { allPermissionsGranted, stillHaveToAskForDeviceAccess } from './UserConsentTracker';
+import { PermissionState, UserConsentTracker } from './UserConsentTracker';
+
+const allPermissionsGranted = () => {
+    return new UserConsentTracker({
+        camera: PermissionState.Allowed,
+        microphone: PermissionState.Allowed
+    });
+};
+
+const stillHaveToAskForDeviceAccess = () => {
+    return new UserConsentTracker({
+        camera: PermissionState.Ask,
+        microphone: PermissionState.Ask
+    });
+};
 
 const runAndReport = async (fake: MediaDevicesFake, scenario: Scenario) => {
     const stream = fake.getUserMedia(scenario.constraints);
