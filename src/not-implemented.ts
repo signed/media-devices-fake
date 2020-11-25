@@ -1,3 +1,3 @@
 export const notImplemented = (message?: string): Error => {
-    return new Error(message ?? 'not implemented');
-};
+  return new Error(message ?? 'not implemented')
+}

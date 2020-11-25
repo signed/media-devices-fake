@@ -15,7 +15,8 @@
     "build:types": "tsc --project tsconfig.json --emitDeclarationOnly --declaration --declarationMap --declarationDir lib/types",
     "test": "jest",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "yarn build"
+    "prepublishOnly": "yarn build",
+    "prettier": "prettier --write ."
   },
   "license": "MIT",
   "devDependencies": {

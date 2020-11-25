@@ -1,19 +1,25 @@
-import { MediaDeviceDescription } from './MediaDeviceDescription';
+import {MediaDeviceDescription} from './MediaDeviceDescription'
 
-export const anyDevice = (override: Partial<MediaDeviceDescription> = {}): MediaDeviceDescription => {
-    return {
-        deviceId: 'stand-in-device-id',
-        groupId: 'stand-in-group-id',
-        kind: 'videoinput',
-        label: 'Acme Device (HD)',
-        ...override
-    };
-};
+export const anyDevice = (
+  override: Partial<MediaDeviceDescription> = {}
+): MediaDeviceDescription => {
+  return {
+    deviceId: 'stand-in-device-id',
+    groupId: 'stand-in-group-id',
+    kind: 'videoinput',
+    label: 'Acme Device (HD)',
+    ...override,
+  }
+}
 
-export const anyCamera = (override: Partial<Omit<MediaDeviceDescription, 'kind'>> = {}): MediaDeviceDescription => {
-    return anyDevice({ ...override, kind: 'videoinput' });
-};
+export const anyCamera = (
+  override: Partial<Omit<MediaDeviceDescription, 'kind'>> = {}
+): MediaDeviceDescription => {
+  return anyDevice({...override, kind: 'videoinput'})
+}
 
-export const anyMicrophone = (override: Partial<Omit<MediaDeviceDescription, 'kind'>> = {}): MediaDeviceDescription => {
-    return anyDevice({ ...override, kind: 'audioinput' });
-};
+export const anyMicrophone = (
+  override: Partial<Omit<MediaDeviceDescription, 'kind'>> = {}
+): MediaDeviceDescription => {
+  return anyDevice({...override, kind: 'audioinput'})
+}
