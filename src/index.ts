@@ -13,12 +13,18 @@ export type InitialSetup = {
     camera?: PermissionState;
 }
 
-export const allAccessAllowed = (additional: Omit<InitialSetup, 'microphone' | 'camera'> = {}): InitialSetup => {
+type InitialSetupWithoutPermissions = Omit<InitialSetup, 'microphone' | 'camera'>;
+
+export const stillHaveToAskForDeviceAccess = (additional: InitialSetupWithoutPermissions = {}): InitialSetup => {
+    return ({ microphone: PermissionState.Ask, camera: PermissionState.Ask, attachedDevices: [], ...additional });
+};
+
+export const allAccessAllowed = (additional: InitialSetupWithoutPermissions = {}): InitialSetup => {
     return ({ microphone: PermissionState.Allowed, camera: PermissionState.Allowed, attachedDevices: [], ...additional });
 };
 
-export const stillHaveToAskForDeviceAccess = (additional: Omit<InitialSetup, 'microphone' | 'camera'> = {}): InitialSetup => {
-    return ({ microphone: PermissionState.Ask, camera: PermissionState.Ask, attachedDevices: [], ...additional });
+export const allAccessBlocked = (additional: InitialSetupWithoutPermissions = {}): InitialSetup => {
+    return ({ microphone: PermissionState.Blocked, camera: PermissionState.Blocked, attachedDevices: [], ...additional });
 };
 
 export interface MediaDevicesControl {
