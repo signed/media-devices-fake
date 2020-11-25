@@ -1,5 +1,5 @@
 {
-  "name": "@signed/media-devices-fake",
+  "name": "@fakes/media-devices",
   "version": "0.0.8",
   "description": "A interactive fake implementation of MediaDevices interface in the browser for testing",
   "main": "lib/cjs/index.js",
