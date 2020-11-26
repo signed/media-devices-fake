@@ -7,7 +7,8 @@ tbd
 ## How to release a new version
 
 ```
-yarn publish --registry http://localhost:4873 --new-version 0.0.8
+yarn login --registry https://registry.npmjs.org
+yarn publish --registry https://registry.npmjs.org --access public --new-version 0.1.0 --tag beta
 ```
 
 # Opportunities
