@@ -1,4 +1,3 @@
-export {MediaDevicesFake} from './MediaDevicesFake'
 export {MediaDeviceDescription} from './MediaDeviceDescription'
 export {anyMicrophone, anyCamera, anyDevice} from './DeviceMother'
 export {PermissionPrompt, PermissionPromptAction, RequestedMediaInput} from './UserConsentTracker'
