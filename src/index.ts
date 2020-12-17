@@ -3,6 +3,7 @@ export {anyMicrophone, anyCamera, anyDevice} from './DeviceMother'
 export {PermissionPrompt, PermissionPromptAction, RequestedMediaInput} from './UserConsentTracker'
 import {MediaDeviceDescription} from './MediaDeviceDescription'
 import {MediaDevicesFake} from './MediaDevicesFake'
+import {PermissionsFake} from './permissions/PermissionsFake'
 import {
   allConstraintsFalse,
   existingDevice,
@@ -52,6 +53,7 @@ export const allAccessBlocked = (additional: InitialSetupWithoutPermissions = {}
 
 export interface MediaDevicesControl {
   mediaDevices: MediaDevices
+  permissions: Permissions
 
   attach(toAdd: MediaDeviceDescription): void
 
@@ -65,12 +67,17 @@ export const forgeMediaDevices = (initial: InitialSetup = {}): MediaDevicesContr
   const microphone = initial.microphone ?? PermissionState.Ask
   const consentTracker = new UserConsentTracker({camera, microphone})
   const mediaDevicesFake = new MediaDevicesFake(consentTracker)
+  const permissionsFake = new PermissionsFake(consentTracker)
   const attachedDevices = initial.attachedDevices ?? []
   attachedDevices.forEach((device) => mediaDevicesFake.attach(device))
 
   return new (class implements MediaDevicesControl {
     get mediaDevices(): MediaDevices {
       return mediaDevicesFake
+    }
+
+    get permissions(): Permissions {
+      return permissionsFake
     }
 
     attach(toAdd: MediaDeviceDescription): void {

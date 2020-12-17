@@ -1,14 +1,4 @@
-import {
-  allAccessAllowed,
-  allAccessBlocked,
-  anyCamera,
-  anyMicrophone,
-  forgeMediaDevices,
-  MediaDevicesFake,
-  PermissionPromptAction,
-  RequestedMediaInput,
-  stillHaveToAskForDeviceAccess,
-} from './index'
+import {allAccessAllowed, allAccessBlocked, anyCamera, anyMicrophone, forgeMediaDevices, PermissionPromptAction, RequestedMediaInput, stillHaveToAskForDeviceAccess} from './index'
 import './matchers/dom-exception'
 import './matchers/to-include-video-track'
 
@@ -18,18 +8,20 @@ describe('MediaDevicesFake', () => {
       const control = forgeMediaDevices(
         stillHaveToAskForDeviceAccess({attachedDevices: [anyCamera({label: 'The Camera'})]})
       )
+      expect((await control.permissions.query({name: 'camera'})).state).toBe('prompt')
       const userMediaPromise = control.mediaDevices.getUserMedia({video: true})
       const permissionPrompt = await control.deviceAccessPrompt()
       expect(permissionPrompt.requestedPermissions()).toEqual([RequestedMediaInput.Camera])
       permissionPrompt.takeAction(PermissionPromptAction.Allow)
       expect((await userMediaPromise).getVideoTracks()[0].label).toEqual('The Camera')
+      expect((await control.permissions.query({name: 'camera'})).state).toBe('granted')
 
       // 2nd time should not need a permission prompt
       expect(await control.mediaDevices.getUserMedia({video: true})).toIncludeVideoTrack()
     })
 
     test('reject promise with a DomException after blocking access', async () => {
-      const {mediaDevices, attach, deviceAccessPrompt} = forgeMediaDevices(
+      const {mediaDevices, attach, deviceAccessPrompt, permissions} = forgeMediaDevices(
         stillHaveToAskForDeviceAccess()
       )
       attach(anyMicrophone())
@@ -40,6 +32,8 @@ describe('MediaDevicesFake', () => {
 
       permissionPrompt.takeAction(PermissionPromptAction.Block)
       await expect(userMediaPromise).rejects.domException('Permission denied', 'NotAllowedError')
+
+      expect((await permissions.query({name: 'microphone'})).state).toBe('denied')
 
       // 2nd time should not need a permission prompt
       await expect(mediaDevices.getUserMedia({audio: true})).rejects.domException(

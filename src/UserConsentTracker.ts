@@ -50,6 +50,10 @@ export class UserConsentTracker {
 
   constructor(readonly _userConsent: UserConsent) {}
 
+  userConsentStateFor(kind: keyof UserConsent){
+    return this._userConsent[kind]
+  }
+
   requestPermissionFor(permissionRequest: PermissionRequest) {
     if (this._pendingPermissionRequest) {
       throw notImplemented(
