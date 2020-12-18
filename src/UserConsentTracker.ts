@@ -7,7 +7,7 @@ export enum RequestedMediaInput {
 }
 
 export enum PermissionPromptAction {
-  Dismiss = 'Dismiss', // permission state stays in Ask, 3rd time dismiss results in block
+  Dismiss = 'Dismiss', // permission state stays in prompt, 3rd time dismiss results in block
   Block = 'Block',
   Allow = 'Allow',
 }
@@ -25,9 +25,9 @@ export interface PermissionRequest {
 }
 
 export enum PermissionState {
-  Ask = 'Ask',
-  Allowed = 'Allowed',
-  Blocked = 'Blocked',
+  prompt = 'prompt',
+  granted = 'granted',
+  denied = 'denied',
 }
 
 export type UserConsent = {
@@ -37,10 +37,10 @@ export type UserConsent = {
 
 const resultingPermissionStateFor = (action: PermissionPromptAction): PermissionState => {
   if (action === PermissionPromptAction.Allow) {
-    return PermissionState.Allowed
+    return PermissionState.granted
   }
   if (action === PermissionPromptAction.Block) {
-    return PermissionState.Blocked
+    return PermissionState.denied
   }
   throw notImplemented(`action: ${action}`)
 }
@@ -50,7 +50,7 @@ export class UserConsentTracker {
 
   constructor(readonly _userConsent: UserConsent) {}
 
-  userConsentStateFor(kind: keyof UserConsent){
+  userConsentStateFor(kind: keyof UserConsent) {
     return this._userConsent[kind]
   }
 
@@ -73,20 +73,20 @@ export class UserConsentTracker {
 
   private permissionGrantedFor(deviceKind: MediaDeviceKind) {
     if (deviceKind === 'videoinput') {
-      return this._userConsent.camera === PermissionState.Allowed
+      return this._userConsent.camera === PermissionState.granted
     }
     if (deviceKind === 'audioinput') {
-      return this._userConsent.microphone === PermissionState.Allowed
+      return this._userConsent.microphone === PermissionState.granted
     }
     throw notImplemented(`permissionGrantedFor '${deviceKind}'`)
   }
 
   private permissionBlockedFor(deviceKind: MediaDeviceKind) {
     if (deviceKind === 'videoinput') {
-      return this._userConsent.camera === PermissionState.Blocked
+      return this._userConsent.camera === PermissionState.denied
     }
     if (deviceKind === 'audioinput') {
-      return this._userConsent.microphone === PermissionState.Blocked
+      return this._userConsent.microphone === PermissionState.denied
     }
     throw notImplemented(`permissionGrantedFor '${deviceKind}'`)
   }
@@ -168,10 +168,10 @@ export class UserConsentTracker {
 
   accessAllowedFor(kind: MediaDeviceKind): boolean {
     if (kind === 'audioinput') {
-      return this._userConsent.microphone === PermissionState.Allowed
+      return this._userConsent.microphone === PermissionState.granted
     }
     if (kind === 'videoinput') {
-      return this._userConsent.camera === PermissionState.Allowed
+      return this._userConsent.camera === PermissionState.granted
     }
     throw notImplemented(`not sure how to implement this for ${kind}`)
   }

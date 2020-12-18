@@ -15,15 +15,15 @@ import {PermissionState, UserConsentTracker} from './UserConsentTracker'
 
 const allPermissionsGranted = () => {
   return new UserConsentTracker({
-    camera: PermissionState.Allowed,
-    microphone: PermissionState.Allowed,
+    camera: PermissionState.granted,
+    microphone: PermissionState.granted,
   })
 }
 
 const stillHaveToAskForDeviceAccess = () => {
   return new UserConsentTracker({
-    camera: PermissionState.Ask,
-    microphone: PermissionState.Ask,
+    camera: PermissionState.prompt,
+    microphone: PermissionState.prompt,
   })
 }
 
