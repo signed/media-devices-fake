@@ -11,19 +11,19 @@ import {
   requestedDeviceTypeNotAttached,
   Scenario,
 } from './Scenarios'
-import {PermissionState, UserConsentTracker} from './UserConsentTracker'
+import {UserConsentTracker} from './UserConsentTracker'
 
 const allPermissionsGranted = () => {
   return new UserConsentTracker({
-    camera: PermissionState.granted,
-    microphone: PermissionState.granted,
+    camera: 'granted',
+    microphone: 'granted',
   })
 }
 
 const stillHaveToAskForDeviceAccess = () => {
   return new UserConsentTracker({
-    camera: PermissionState.prompt,
-    microphone: PermissionState.prompt,
+    camera: 'prompt',
+    microphone: 'prompt',
   })
 }
 

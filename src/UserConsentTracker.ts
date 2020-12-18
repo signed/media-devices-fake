@@ -24,12 +24,6 @@ export interface PermissionRequest {
   blocked: () => void
 }
 
-export enum PermissionState {
-  prompt = 'prompt',
-  granted = 'granted',
-  denied = 'denied',
-}
-
 export type UserConsent = {
   camera: PermissionState
   microphone: PermissionState
@@ -37,10 +31,10 @@ export type UserConsent = {
 
 const resultingPermissionStateFor = (action: PermissionPromptAction): PermissionState => {
   if (action === PermissionPromptAction.Allow) {
-    return PermissionState.granted
+    return 'granted'
   }
   if (action === PermissionPromptAction.Block) {
-    return PermissionState.denied
+    return 'denied'
   }
   throw notImplemented(`action: ${action}`)
 }
@@ -73,20 +67,20 @@ export class UserConsentTracker {
 
   private permissionGrantedFor(deviceKind: MediaDeviceKind) {
     if (deviceKind === 'videoinput') {
-      return this._userConsent.camera === PermissionState.granted
+      return this._userConsent.camera === 'granted'
     }
     if (deviceKind === 'audioinput') {
-      return this._userConsent.microphone === PermissionState.granted
+      return this._userConsent.microphone === 'granted'
     }
     throw notImplemented(`permissionGrantedFor '${deviceKind}'`)
   }
 
   private permissionBlockedFor(deviceKind: MediaDeviceKind) {
     if (deviceKind === 'videoinput') {
-      return this._userConsent.camera === PermissionState.denied
+      return this._userConsent.camera === 'denied'
     }
     if (deviceKind === 'audioinput') {
-      return this._userConsent.microphone === PermissionState.denied
+      return this._userConsent.microphone === 'denied'
     }
     throw notImplemented(`permissionGrantedFor '${deviceKind}'`)
   }
@@ -168,10 +162,10 @@ export class UserConsentTracker {
 
   accessAllowedFor(kind: MediaDeviceKind): boolean {
     if (kind === 'audioinput') {
-      return this._userConsent.microphone === PermissionState.granted
+      return this._userConsent.microphone === 'granted'
     }
     if (kind === 'videoinput') {
-      return this._userConsent.camera === PermissionState.granted
+      return this._userConsent.camera === 'granted'
     }
     throw notImplemented(`not sure how to implement this for ${kind}`)
   }

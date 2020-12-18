@@ -12,7 +12,7 @@ import {
   requestedDeviceTypeNotAttached,
   scenarios as all,
 } from './Scenarios'
-import {PermissionPrompt, PermissionState, UserConsentTracker} from './UserConsentTracker'
+import {PermissionPrompt, UserConsentTracker} from './UserConsentTracker'
 
 export type InitialSetup = {
   attachedDevices?: MediaDeviceDescription[]
@@ -26,8 +26,8 @@ export const stillHaveToAskForDeviceAccess = (
   additional: InitialSetupWithoutPermissions = {}
 ): InitialSetup => {
   return {
-    microphone: PermissionState.prompt,
-    camera: PermissionState.prompt,
+    microphone: 'prompt',
+    camera: 'prompt',
     attachedDevices: [],
     ...additional,
   }
@@ -35,8 +35,8 @@ export const stillHaveToAskForDeviceAccess = (
 
 export const allAccessAllowed = (additional: InitialSetupWithoutPermissions = {}): InitialSetup => {
   return {
-    microphone: PermissionState.granted,
-    camera: PermissionState.granted,
+    microphone: 'granted',
+    camera: 'granted',
     attachedDevices: [],
     ...additional,
   }
@@ -44,8 +44,8 @@ export const allAccessAllowed = (additional: InitialSetupWithoutPermissions = {}
 
 export const allAccessBlocked = (additional: InitialSetupWithoutPermissions = {}): InitialSetup => {
   return {
-    microphone: PermissionState.denied,
-    camera: PermissionState.denied,
+    microphone: 'denied',
+    camera: 'denied',
     attachedDevices: [],
     ...additional,
   }
@@ -63,8 +63,8 @@ export interface MediaDevicesControl {
 }
 
 export const forgeMediaDevices = (initial: InitialSetup = {}): MediaDevicesControl => {
-  const camera = initial.camera ?? PermissionState.prompt
-  const microphone = initial.microphone ?? PermissionState.prompt
+  const camera = initial.camera ?? 'prompt'
+  const microphone = initial.microphone ?? 'prompt'
   const consentTracker = new UserConsentTracker({camera, microphone})
   const mediaDevicesFake = new MediaDevicesFake(consentTracker)
   const permissionsFake = new PermissionsFake(consentTracker)
