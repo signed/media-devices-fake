@@ -196,10 +196,10 @@ export class MediaDevicesFake implements MediaDevices {
   ): void
   addEventListener(type: any, listener: any, options?: boolean | AddEventListenerOptions): void {
     if (options) {
-      throw notImplemented()
+      throw notImplemented('MediaDevicesFake.addEventListener() options argument')
     }
     if (type !== 'devicechange') {
-      throw notImplemented()
+      throw notImplemented(`MediaDevicesFake.addEventListener() type: ${type}`)
     }
     this.deviceChangeListeners.push(listener)
   }
@@ -221,10 +221,10 @@ export class MediaDevicesFake implements MediaDevices {
   ): void
   removeEventListener(type: any, listener: any, options?: boolean | EventListenerOptions): void {
     if (options) {
-      throw notImplemented()
+      throw notImplemented('MediaDevicesFake.removeEventListener() options argument')
     }
     if (type !== 'devicechange') {
-      throw notImplemented()
+      throw notImplemented(`MediaDevicesFake.removeEventListener() type: ${type}`)
     }
     const index = this.deviceChangeListeners.indexOf(listener)
     if (index >= 0) {
@@ -233,7 +233,7 @@ export class MediaDevicesFake implements MediaDevices {
   }
 
   dispatchEvent(event: Event): boolean {
-    throw notImplemented()
+    throw notImplemented('MediaDevicesFake.dispatchEvent()')
   }
 
   enumerateDevices(): Promise<MediaDeviceInfo[]> {
@@ -241,7 +241,7 @@ export class MediaDevicesFake implements MediaDevices {
   }
 
   getSupportedConstraints(): MediaTrackSupportedConstraints {
-    throw notImplemented()
+    throw notImplemented('MediaDevicesFake.getSupportedConstraints()')
   }
 
   // https://w3c.github.io/mediacapture-main/#methods-5

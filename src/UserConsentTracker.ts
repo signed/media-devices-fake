@@ -36,7 +36,7 @@ const resultingPermissionStateFor = (action: PermissionPromptAction): Permission
   if (action === PermissionPromptAction.Block) {
     return 'denied'
   }
-  throw notImplemented(`action: ${action}`)
+  throw notImplemented(`resultingPermissionStateFor() action: ${action}`)
 }
 
 export class UserConsentTracker {

@@ -21,6 +21,6 @@ export class MediaDeviceInfoFake implements MediaDeviceInfo {
   }
 
   toJSON(): any {
-    throw notImplemented()
+    throw notImplemented('MediaDeviceInfo.toJSON()')
   }
 }

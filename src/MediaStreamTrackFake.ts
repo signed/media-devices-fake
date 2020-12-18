@@ -54,7 +54,7 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
   }
 
   get isolated(): boolean {
-    throw notImplemented()
+    throw notImplemented('MediaStreamTrackFake.isolated()')
   }
 
   /**
@@ -78,7 +78,7 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
    * Returns a Boolean value indicating whether the track is unable to provide media data due to a technical issue.
    */
   get muted(): boolean {
-    throw notImplemented()
+    throw notImplemented('get MediaStreamTrackFake.muted')
   }
 
   /**
@@ -89,35 +89,35 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
   }
 
   set onended(_listener: MediaStreamTrackEventListener | null) {
-    throw notImplemented()
+    throw notImplemented('set MediaStreamTrackFake.onended')
   }
 
   get onended(): MediaStreamTrackEventListener | null {
-    throw notImplemented()
+    throw notImplemented('get MediaStreamTrackFake.onended')
   }
 
   set onisolationchange(_listener: MediaStreamTrackEventListener | null) {
-    throw notImplemented()
+    throw notImplemented('set MediaStreamTrackFake.onisolationchange')
   }
 
   get onisolationchange(): MediaStreamTrackEventListener | null {
-    throw notImplemented()
+    throw notImplemented('get MediaStreamTrackFake.onisolationchange')
   }
 
   set onmute(_listener: MediaStreamTrackEventListener | null) {
-    throw notImplemented()
+    throw notImplemented('set MediaStreamTrackFake.onmute')
   }
 
   get onmute(): MediaStreamTrackEventListener | null {
-    throw notImplemented()
+    throw notImplemented('get MediaStreamTrackFake.onmute')
   }
 
   set onunmute(_listener: MediaStreamTrackEventListener | null) {
-    throw notImplemented()
+    throw notImplemented('set MediaStreamTrackFake.onunmute')
   }
 
   get onunmute(): MediaStreamTrackEventListener | null {
-    throw notImplemented()
+    throw notImplemented('get MediaStreamTrackFake.onunmute')
   }
 
   addEventListener<K extends keyof MediaStreamTrackEventMap>(
@@ -136,7 +136,7 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
     options?: boolean | AddEventListenerOptions
   ): void
   addEventListener(type: any, listener: any, options?: boolean | AddEventListenerOptions): void {
-    throw notImplemented()
+    throw notImplemented('MediaStreamTrackFake.addEventListener()')
   }
 
   removeEventListener<K extends keyof MediaStreamTrackEventMap>(
@@ -155,11 +155,11 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
     options?: EventListenerOptions | boolean
   ): void
   removeEventListener(type: any, listener: any, options?: boolean | EventListenerOptions): void {
-    throw notImplemented()
+    throw notImplemented('MediaStreamTrackFake.removeEventListener()')
   }
 
   dispatchEvent(event: Event): boolean {
-    throw notImplemented()
+    throw notImplemented('MediaStreamTrackFake.dispatchEvent()')
   }
 
   /**
@@ -174,14 +174,14 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
    * @param constraints
    */
   applyConstraints(constraints?: MediaTrackConstraints): Promise<void> {
-    throw notImplemented()
+    throw notImplemented('MediaStreamTrackFake.applyConstraints()')
   }
 
   /**
    * creates a duplicate of the MediaStreamTrack. This new MediaStreamTrack object is identical except for its unique id.
    */
   clone(): MediaStreamTrack {
-    throw notImplemented()
+    throw notImplemented('MediaStreamTrackFake.clone()')
   }
 
   /**
@@ -190,7 +190,7 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
    * Once you know what the browser's capabilities are, your script can use applyConstraints() to ask for the track to be configured to match ideal or acceptable settings.
    */
   getCapabilities(): MediaTrackCapabilities {
-    throw notImplemented()
+    throw notImplemented('MediaStreamTrackFake.getCapabilities()')
   }
 
   /**
@@ -202,14 +202,14 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
    * Constraints can also specify ideal and/or acceptable sizes or ranges of sizes.
    */
   getConstraints(): MediaTrackConstraints {
-    throw notImplemented()
+    throw notImplemented('MediaStreamTrackFake.getConstraints()')
   }
 
   /**
    * Returns a MediaTrackSettings object containing the current values of each of the constrainable properties for the current MediaStreamTrack.
    */
   getSettings(): MediaTrackSettings {
-    throw notImplemented()
+    throw notImplemented('MediaStreamTrackFake.getSettings()')
   }
 
   /**

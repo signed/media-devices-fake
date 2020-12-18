@@ -20,6 +20,6 @@ export class PermissionsFake implements Permissions {
       const permissionState = this.consentTracker.userConsentStateFor('microphone')
       return Promise.resolve(new PermissionStatusFake(permissionState))
     }
-    throw notImplemented('only camera ')
+    throw notImplemented('permissions.query() only supports camera and microphone for now')
   }
 }

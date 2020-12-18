@@ -35,19 +35,19 @@ export class MediaStreamFake implements MediaStream {
   }
 
   get onaddtrack(): MediaStreamEventListener | null {
-    throw notImplemented()
+    throw notImplemented('get MediaStreamFake.onaddtrack')
   }
 
   set onaddtrack(_listener: MediaStreamEventListener | null) {
-    throw notImplemented()
+    throw notImplemented('set MediaStreamFake.onaddtrack')
   }
 
   get onremovetrack(): MediaStreamEventListener | null {
-    throw notImplemented()
+    throw notImplemented('get MediaStreamFake.onremovetrack')
   }
 
   set onremovetrack(_listener: MediaStreamEventListener | null) {
-    throw notImplemented()
+    throw notImplemented('set MediaStreamFake.onremovetrack')
   }
 
   addEventListener<K extends keyof MediaStreamEventMap>(
@@ -66,7 +66,7 @@ export class MediaStreamFake implements MediaStream {
     options?: boolean | AddEventListenerOptions
   ): void
   addEventListener(type: any, listener: any, options?: boolean | AddEventListenerOptions): void {
-    throw notImplemented()
+    throw notImplemented('MediaStreamFake.addEventListener()')
   }
 
   removeEventListener<K extends keyof MediaStreamEventMap>(
@@ -85,11 +85,11 @@ export class MediaStreamFake implements MediaStream {
     options?: EventListenerOptions | boolean
   ): void
   removeEventListener(type: any, listener: any, options?: boolean | EventListenerOptions): void {
-    throw notImplemented()
+    throw notImplemented('MediaStreamFake.removeEventListener()')
   }
 
   dispatchEvent(event: Event): boolean {
-    throw notImplemented()
+    throw notImplemented('MediaStreamFake.dispatchEvent()')
   }
 
   /**
@@ -98,7 +98,7 @@ export class MediaStreamFake implements MediaStream {
    * @param track
    */
   addTrack(track: MediaStreamTrack): void {
-    throw notImplemented()
+    throw notImplemented('MediaStreamFake.addTrack()')
   }
 
   /**
@@ -106,7 +106,7 @@ export class MediaStreamFake implements MediaStream {
    * The clone will, however, have a unique value for {@link MediaStreamFake.id id}.
    */
   clone(): MediaStream {
-    throw notImplemented()
+    throw notImplemented('MediaStreamFake.clone()')
   }
 
   /**
