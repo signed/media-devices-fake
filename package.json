@@ -6,6 +6,7 @@
   "module": "lib/esm/index.js",
   "types": "lib/types",
   "files": [
+    "src",
     "lib"
   ],
   "scripts": {
