@@ -1,4 +1,13 @@
-import {allAccessAllowed, allAccessBlocked, anyCamera, anyMicrophone, forgeMediaDevices, PermissionPromptAction, RequestedMediaInput, stillHaveToAskForDeviceAccess} from './index'
+import {
+  allAccessAllowed,
+  allAccessBlocked,
+  anyCamera,
+  anyMicrophone,
+  forgeMediaDevices,
+  PermissionPromptAction,
+  RequestedMediaInput,
+  stillHaveToAskForDeviceAccess,
+} from './index'
 import './matchers/dom-exception'
 import './matchers/to-include-video-track'
 
@@ -70,6 +79,45 @@ describe('MediaDevicesFake', () => {
         'Permission denied',
         'NotAllowedError'
       )
+    })
+  })
+})
+
+describe('PermissionsFake', () => {
+  describe('notify onchange listener on permission state change', () => {
+    test('for camera', async () => {
+      const {permissions, mediaDevices, deviceAccessPrompt} = forgeMediaDevices(
+        stillHaveToAskForDeviceAccess({attachedDevices: [anyCamera()]})
+      )
+      const permissionStatus = await permissions.query({name: 'camera'})
+      expect(permissionStatus.state).toEqual('prompt')
+      const onChange = jest.fn()
+      const onchange = jest.fn()
+      permissionStatus.onchange = onChange
+      permissionStatus.addEventListener('change', onchange)
+      mediaDevices.getUserMedia({video: true})
+      const prompt = await deviceAccessPrompt()
+      prompt.takeAction(PermissionPromptAction.Allow)
+      expect(onChange).toHaveBeenCalled()
+      expect(onchange).toHaveBeenCalled()
+      expect(permissionStatus.state).toEqual('granted')
+    })
+    test('for microphone', async () => {
+      const {permissions, mediaDevices, deviceAccessPrompt} = forgeMediaDevices(
+        stillHaveToAskForDeviceAccess({attachedDevices: [anyMicrophone()]})
+      )
+      const permissionStatus = await permissions.query({name: 'microphone'})
+      expect(permissionStatus.state).toEqual('prompt')
+      const onChange = jest.fn()
+      const onchange = jest.fn()
+      permissionStatus.onchange = onChange
+      permissionStatus.addEventListener('change', onchange)
+      mediaDevices.getUserMedia({audio: true}).catch(() => {})
+      const prompt = await deviceAccessPrompt()
+      prompt.takeAction(PermissionPromptAction.Block)
+      expect(onChange).toHaveBeenCalled()
+      expect(onchange).toHaveBeenCalled()
+      expect(permissionStatus.state).toEqual('denied')
     })
   })
 })

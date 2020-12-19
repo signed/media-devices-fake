@@ -1,5 +1,6 @@
 import {Deferred} from './Deffered'
 import {notImplemented} from './not-implemented'
+import {PermissionStatusFake} from './permissions/PermissionStatusFake'
 
 export enum RequestedMediaInput {
   Microphone = 'Microphone',
@@ -40,12 +41,19 @@ const resultingPermissionStateFor = (action: PermissionPromptAction): Permission
 }
 
 export class UserConsentTracker {
+  private readonly _trackedPermissionStatus: Record<keyof UserConsent, PermissionStatusFake[]> = {
+    camera: [],
+    microphone: [],
+  }
   private _pendingPermissionRequest: void | PermissionRequest = undefined
 
   constructor(readonly _userConsent: UserConsent) {}
 
-  userConsentStateFor(kind: keyof UserConsent) {
-    return this._userConsent[kind]
+  permissionStatusFor(kind: keyof UserConsent) {
+    const permissionState = this._userConsent[kind]
+    const permissionStatus = new PermissionStatusFake(permissionState)
+    this._trackedPermissionStatus[kind].push(permissionStatus)
+    return permissionStatus
   }
 
   requestPermissionFor(permissionRequest: PermissionRequest) {
@@ -98,11 +106,16 @@ export class UserConsentTracker {
           if (this._pendingPermissionRequest === undefined) {
             throw new Error('there is no pending permission request')
           }
+          const updatedPermission = resultingPermissionStateFor(action)
           if (this._pendingPermissionRequest.deviceKind === 'audioinput') {
-            this._userConsent.microphone = resultingPermissionStateFor(action)
+            this._userConsent.microphone = updatedPermission
+            this._trackedPermissionStatus.microphone.forEach((fake) =>
+              fake.updateTo(updatedPermission)
+            )
           }
           if (this._pendingPermissionRequest.deviceKind === 'videoinput') {
-            this._userConsent.camera = resultingPermissionStateFor(action)
+            this._userConsent.camera = updatedPermission
+            this._trackedPermissionStatus.camera.forEach((fake) => fake.updateTo(updatedPermission))
           }
           this._pendingPermissionRequest = undefined
         }
