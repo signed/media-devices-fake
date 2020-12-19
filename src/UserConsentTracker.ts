@@ -7,11 +7,7 @@ export enum RequestedMediaInput {
   Camera = 'Camera',
 }
 
-export enum PermissionPromptAction {
-  Dismiss = 'Dismiss', // permission state stays in prompt, 3rd time dismiss results in block
-  Block = 'Block',
-  Allow = 'Allow',
-}
+export type PermissionPromptAction = 'dismiss' | 'allow' | 'block'
 
 export interface PermissionPrompt {
   requestedPermissions(): RequestedMediaInput[]
@@ -31,10 +27,10 @@ export type UserConsent = {
 }
 
 const resultingPermissionStateFor = (action: PermissionPromptAction): PermissionState => {
-  if (action === PermissionPromptAction.Allow) {
+  if (action === 'allow') {
     return 'granted'
   }
-  if (action === PermissionPromptAction.Block) {
+  if (action === 'block') {
     return 'denied'
   }
   throw notImplemented(`resultingPermissionStateFor() action: ${action}`)
@@ -160,11 +156,11 @@ export class UserConsentTracker {
 
       takeAction(action: PermissionPromptAction): void {
         complete(action)
-        if (action === PermissionPromptAction.Allow) {
+        if (action === 'allow') {
           permissionRequest.granted()
           return
         }
-        if (action === PermissionPromptAction.Block) {
+        if (action === 'block') {
           permissionRequest.blocked()
           return
         }

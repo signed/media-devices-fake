@@ -4,7 +4,6 @@ import {
   anyCamera,
   anyMicrophone,
   forgeMediaDevices,
-  PermissionPromptAction,
   RequestedMediaInput,
   stillHaveToAskForDeviceAccess,
 } from './index'
@@ -21,7 +20,7 @@ describe('MediaDevicesFake', () => {
       const userMediaPromise = control.mediaDevices.getUserMedia({video: true})
       const permissionPrompt = await control.deviceAccessPrompt()
       expect(permissionPrompt.requestedPermissions()).toEqual([RequestedMediaInput.Camera])
-      permissionPrompt.takeAction(PermissionPromptAction.Allow)
+      permissionPrompt.takeAction('allow')
       expect((await userMediaPromise).getVideoTracks()[0].label).toEqual('The Camera')
       expect((await control.permissions.query({name: 'camera'})).state).toBe('granted')
 
@@ -39,7 +38,7 @@ describe('MediaDevicesFake', () => {
       const permissionPrompt = await deviceAccessPrompt()
       expect(permissionPrompt.requestedPermissions()).toEqual([RequestedMediaInput.Microphone])
 
-      permissionPrompt.takeAction(PermissionPromptAction.Block)
+      permissionPrompt.takeAction('block')
       await expect(userMediaPromise).rejects.domException('Permission denied', 'NotAllowedError')
 
       expect((await permissions.query({name: 'microphone'})).state).toBe('denied')
@@ -97,7 +96,7 @@ describe('PermissionsFake', () => {
       permissionStatus.addEventListener('change', onchange)
       mediaDevices.getUserMedia({video: true})
       const prompt = await deviceAccessPrompt()
-      prompt.takeAction(PermissionPromptAction.Allow)
+      prompt.takeAction('allow')
       expect(onChange).toHaveBeenCalled()
       expect(onchange).toHaveBeenCalled()
       expect(permissionStatus.state).toEqual('granted')
@@ -114,7 +113,7 @@ describe('PermissionsFake', () => {
       permissionStatus.addEventListener('change', onchange)
       mediaDevices.getUserMedia({audio: true}).catch(() => {})
       const prompt = await deviceAccessPrompt()
-      prompt.takeAction(PermissionPromptAction.Block)
+      prompt.takeAction('block')
       expect(onChange).toHaveBeenCalled()
       expect(onchange).toHaveBeenCalled()
       expect(permissionStatus.state).toEqual('denied')
