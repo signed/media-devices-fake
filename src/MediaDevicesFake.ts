@@ -15,29 +15,7 @@ const descriptionMatching = (description: MediaDeviceDescription) => (
   device: MediaDeviceDescription
 ) => device.deviceId === description.deviceId && device.groupId === description.groupId
 
-const positiveNumericNonRequiredConstraint = [
-  'height',
-  'width',
-  'frameRate',
-  'aspectRatio',
-  'sampleRate',
-] as const
-type PositiveNumericNonRequiredConstraintName = typeof positiveNumericNonRequiredConstraint[number]
-const _fit = (actual: number, ideal: number): number =>
-  actual == ideal ? 0 : Math.abs(actual - ideal) / Math.max(Math.abs(actual), Math.abs(ideal))
-
-const stringEnumNonRequiredConstraint = [
-  'deviceId',
-  'groupId',
-  'facingMode',
-  'resizeMode',
-  'echoCancellation',
-]
-
-type StringEnumNonRequiredConstraintName = typeof stringEnumNonRequiredConstraint[number]
 const fit2 = (actual: string, ideal: string): number => (actual === ideal ? 0 : 1)
-
-type ConstraintName = PositiveNumericNonRequiredConstraintName | StringEnumNonRequiredConstraintName
 
 type Constraint = (device: MediaDeviceInfoFake) => number
 
@@ -47,14 +25,6 @@ class ConstrainSet {
   constructor(requested: boolean | MediaTrackConstraints) {
     if (typeof requested === 'boolean') {
       return
-    }
-    const passedProperties = Object.getOwnPropertyNames(requested)
-    const implementedProperties: (keyof MediaTrackConstraintSet)[] = ['deviceId']
-    const unsupported = passedProperties.filter(
-      (arg) => !implementedProperties.some((im) => im === arg)
-    )
-    if (unsupported.length) {
-      throw notImplemented(`constraint not implemented ${unsupported}`)
     }
     const deviceId = requested.deviceId
     if (deviceId !== undefined) {
