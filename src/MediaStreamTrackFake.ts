@@ -24,6 +24,8 @@ export const initialMediaStreamTrackProperties = (
  * typically, these are audio or video tracks, but other track types may exist as well.
  */
 export class MediaStreamTrackFake implements MediaStreamTrack {
+  private _onEndedListener: MediaStreamTrackEventListener | null = null
+
   constructor(private readonly properties: MediaStreamTrackProperties) {}
 
   /**
@@ -88,12 +90,12 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
     return this.properties.readyState
   }
 
-  set onended(_listener: MediaStreamTrackEventListener | null) {
-    throw notImplemented('set MediaStreamTrackFake.onended')
+  set onended(listener: MediaStreamTrackEventListener | null) {
+    this._onEndedListener = listener
   }
 
   get onended(): MediaStreamTrackEventListener | null {
-    throw notImplemented('get MediaStreamTrackFake.onended')
+    return this._onEndedListener
   }
 
   set onisolationchange(_listener: MediaStreamTrackEventListener | null) {
@@ -223,5 +225,6 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
    */
   stop(): void {
     this.properties.readyState = 'ended'
+    this._onEndedListener?.(new Event('stand-in'))
   }
 }
