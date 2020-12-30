@@ -30,6 +30,14 @@ describe('MediaStreamTrackFake', () => {
     track.stop()
     expect(track.readyState).toBe('ended')
   })
+
+  test('onEnded is called after stop', () => {
+    const onEndedListener = jest.fn()
+    track.onended = onEndedListener
+    track.stop()
+    expect(onEndedListener).toHaveBeenCalled()
+  })
+
   test('return the label', () => {
     expect(track.label).toBe('The Label')
   })
