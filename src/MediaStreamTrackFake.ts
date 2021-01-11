@@ -225,6 +225,5 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
    */
   stop(): void {
     this.properties.readyState = 'ended'
-    this._onEndedListener?.(new Event('stand-in'))
   }
 }
