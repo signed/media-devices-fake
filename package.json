@@ -20,6 +20,7 @@
   "module": "lib/esm/index.js",
   "types": "lib/types",
   "files": [
+    "README.md",
     "src",
     "lib"
   ],
