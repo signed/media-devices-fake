@@ -6,7 +6,7 @@ The current implementation focuses on reproducing the chromium implementation.
 
 The implementation is driven by personal need and by no means complete.
 Not implemented APIs / behaviour follows a `fail fast` approach throwing errors with additional information about the missing feature.
-If you need not implemented behaviour feel free to open a pull request.
+In case you need not implemented behaviour feel free to open a pull request.
 
 # How to use it
 
