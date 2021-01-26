@@ -8,6 +8,7 @@ import {
   TrackKind,
 } from './MediaStreamTrackFake'
 import {notImplemented} from './not-implemented'
+import {OpenMediaTracks} from './OpenMediaTracks'
 import {UserConsentTracker} from './UserConsentTracker'
 
 type DeviceChangeListener = (this: MediaDevices, ev: Event) => any
@@ -95,7 +96,8 @@ const tryToOpenAStreamFor = (
   deviceKind: MediaDeviceKind,
   trackKind: TrackKind,
   mediaTrackConstraints: boolean | MediaTrackConstraints,
-  allDevices: MediaDeviceInfoFake[]
+  allDevices: MediaDeviceInfoFake[],
+  openMediaTracks: OpenMediaTracks
 ): void => {
   const devices = allDevices.filter((device) => device.kind === deviceKind)
   if (devices.length === 0) {
@@ -110,6 +112,8 @@ const tryToOpenAStreamFor = (
   const mediaTrack = new MediaStreamTrackFake(
     initialMediaStreamTrackProperties(selectedDevice.label, trackKind)
   )
+  openMediaTracks.track(selectedDevice, mediaTrack)
+
   const mediaTracks = [mediaTrack]
   const mediaStream = new MediaStreamFake(mediaStreamId(), mediaTracks)
 
@@ -123,7 +127,10 @@ export class MediaDevicesFake implements MediaDevices {
   private readonly _deviceDescriptions: MediaDeviceDescription[] = []
   private _onDeviceChangeListener: DeviceChangeListener | null = null
 
-  constructor(private readonly _userConsentTracker: UserConsentTracker) {}
+  constructor(
+    private readonly _userConsentTracker: UserConsentTracker,
+    private readonly openMediaTracks: OpenMediaTracks
+  ) {}
 
   private get devices(): MediaDeviceInfoFake[] {
     return this._deviceDescriptions
@@ -239,7 +246,14 @@ export class MediaDevicesFake implements MediaDevices {
     this._userConsentTracker.requestPermissionFor({
       deviceKind,
       granted: () => {
-        tryToOpenAStreamFor(deferred, deviceKind, trackKind, mediaTrackConstraints, this.devices)
+        tryToOpenAStreamFor(
+          deferred,
+          deviceKind,
+          trackKind,
+          mediaTrackConstraints,
+          this.devices,
+          this.openMediaTracks
+        )
       },
       blocked: () => {
         deferred.reject(new DOMException('Permission denied', 'NotAllowedError'))
