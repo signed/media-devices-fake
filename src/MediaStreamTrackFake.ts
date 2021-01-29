@@ -30,10 +30,11 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
   constructor(private readonly properties: MediaStreamTrackProperties) {}
 
   deviceRemoved() {
-    if (this._onEndedListener) {
-      this._onEndedListener.call(this, new Event('ended'))
-    }
-    this.trackEndedListeners.forEach((listener) => listener.call(this, new Event('ended')))
+    this.notifyEndedListeners()
+  }
+
+  permissionRevoked() {
+    this.notifyEndedListeners()
   }
 
   /**
@@ -250,5 +251,12 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
    */
   stop(): void {
     this.properties.readyState = 'ended'
+  }
+
+  private notifyEndedListeners() {
+    if (this._onEndedListener) {
+      this._onEndedListener.call(this, new Event('ended'))
+    }
+    this.trackEndedListeners.forEach((listener) => listener.call(this, new Event('ended')))
   }
 }

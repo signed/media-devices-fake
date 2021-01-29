@@ -46,10 +46,17 @@ export class UserConsentTracker {
   constructor(readonly _userConsent: UserConsent) {}
 
   permissionStatusFor(kind: keyof UserConsent) {
-    const permissionState = this._userConsent[kind]
+    const permissionState = this.permissionStateFor(kind)
     const permissionStatus = new PermissionStatusFake(permissionState)
     this._trackedPermissionStatus[kind].push(permissionStatus)
     return permissionStatus
+  }
+
+  setPermissionFor(kind: keyof UserConsent, state: PermissionState) {
+    this._userConsent[kind] = state
+    this._trackedPermissionStatus[kind].forEach((permissionStatus) =>
+      permissionStatus.updateTo(state)
+    )
   }
 
   requestPermissionFor(permissionRequest: PermissionRequest) {
@@ -67,6 +74,10 @@ export class UserConsentTracker {
       return
     }
     this._pendingPermissionRequest = permissionRequest
+  }
+
+  private permissionStateFor(kind: 'camera' | 'microphone') {
+    return this._userConsent[kind]
   }
 
   private permissionGrantedFor(deviceKind: MediaDeviceKind) {

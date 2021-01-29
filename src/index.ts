@@ -61,6 +61,8 @@ export interface MediaDevicesControl {
   remove(toRemove: MediaDeviceDescription): void
 
   deviceAccessPrompt(): Promise<PermissionPrompt>
+
+  setPermissionFor(type: 'camera' | 'microphone', state: PermissionState): void
 }
 
 export const forgeMediaDevices = (initial: InitialSetup = {}): MediaDevicesControl => {
@@ -87,14 +89,24 @@ export const forgeMediaDevices = (initial: InitialSetup = {}): MediaDevicesContr
     }
 
     remove(toRemove: MediaDeviceDescription): void {
+      mediaDevicesFake.remove(toRemove)
       openMediaTracks.allFor(toRemove).forEach((fake) => {
         fake.deviceRemoved()
       })
-      mediaDevicesFake.remove(toRemove)
     }
 
     deviceAccessPrompt(): Promise<PermissionPrompt> {
       return consentTracker.deviceAccessPrompt()
+    }
+
+    setPermissionFor(type: 'camera' | 'microphone', state: PermissionState): void {
+      consentTracker.setPermissionFor(type, state)
+      if (state === 'granted') {
+        return
+      }
+      openMediaTracks.allFor(type).forEach((fake) => {
+        fake.permissionRevoked()
+      })
     }
   })()
 }

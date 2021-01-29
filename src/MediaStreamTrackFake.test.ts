@@ -68,6 +68,25 @@ describe('MediaStreamTrackFake', () => {
       expect(onEnded).toHaveBeenCalled()
       expect(onEndedListener).toHaveBeenCalled()
     })
+    test('when the device permission is revoked', async () => {
+      const device = anyDevice({kind: 'audioinput'})
+      const control = forgeMediaDevices(allAccessAllowed({attachedDevices: [device]}))
+
+      const mediaStream = await control.mediaDevices.getUserMedia({audio: true})
+      const audioTracks = mediaStream.getAudioTracks()
+      const track = audioTracks[0]
+
+      const onEnded = jest.fn()
+      const onEndedListener = jest.fn()
+
+      track.onended = onEnded
+      track.addEventListener('ended', onEndedListener)
+
+      control.setPermissionFor('microphone', 'prompt')
+
+      expect(onEnded).toHaveBeenCalled()
+      expect(onEndedListener).toHaveBeenCalled()
+    })
   })
 
   test('return the label', () => {

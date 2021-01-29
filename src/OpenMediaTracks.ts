@@ -4,6 +4,20 @@ import {MediaStreamTrackFake} from './MediaStreamTrackFake'
 
 type Entry = {mediaDevice: MediaDeviceInfoFake; mediaTrack: MediaStreamTrackFake}
 
+function assertUnreachable(_: 'you missed a case'): never {
+  throw new Error("Didn't expect to get here")
+}
+
+function toKind(toRemove: 'camera' | 'microphone'): MediaDeviceKind {
+  if (toRemove === 'camera') {
+    return 'videoinput'
+  }
+  if (toRemove === 'microphone') {
+    return 'audioinput'
+  }
+  assertUnreachable(toRemove)
+}
+
 export class OpenMediaTracks {
   private readonly entries: Entry[] = []
 
@@ -11,7 +25,15 @@ export class OpenMediaTracks {
     this.entries.push({mediaDevice, mediaTrack})
   }
 
-  allFor(toRemove: MediaDeviceDescription): MediaStreamTrackFake[] {
+  allFor(toRemove: MediaDeviceDescription | 'camera' | 'microphone'): MediaStreamTrackFake[] {
+    if (typeof toRemove === 'string') {
+      const kind = toKind(toRemove)
+      return this.entries
+        .filter((entry) => {
+          return entry.mediaDevice.kind === kind
+        })
+        .map((entry) => entry.mediaTrack)
+    }
     return this.entries
       .filter((entry) => {
         const trackedDevice = entry.mediaDevice
