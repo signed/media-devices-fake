@@ -21,8 +21,16 @@ function toKind(toRemove: 'camera' | 'microphone'): MediaDeviceKind {
 export class OpenMediaTracks {
   private readonly entries: Entry[] = []
 
-  track(mediaDevice: MediaDeviceInfoFake, mediaTrack: MediaStreamTrackFake) {
-    this.entries.push({mediaDevice, mediaTrack})
+  track(mediaDevice: MediaDeviceInfoFake, mediaStreamTrack: MediaStreamTrackFake) {
+    this.entries.push({mediaDevice, mediaTrack: mediaStreamTrack})
+  }
+
+  remove(toRemove: MediaStreamTrackFake) {
+    const index = this.entries.findIndex((entry) => entry.mediaTrack === toRemove)
+    if (index === -1) {
+      return
+    }
+    this.entries.splice(index, 1)
   }
 
   allFor(toRemove: MediaDeviceDescription | 'camera' | 'microphone'): MediaStreamTrackFake[] {

@@ -113,6 +113,7 @@ const tryToOpenAStreamFor = (
     initialMediaStreamTrackProperties(selectedDevice.label, trackKind)
   )
   openMediaTracks.track(selectedDevice, mediaTrack)
+  mediaTrack.onTerminated = (track) => openMediaTracks.remove(track)
 
   const mediaTracks = [mediaTrack]
   const mediaStream = new MediaStreamFake(mediaStreamId(), mediaTracks)

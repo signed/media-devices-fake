@@ -19,6 +19,8 @@ export const initialMediaStreamTrackProperties = (
   return {id: uuidV4(), readyState: 'live', enabled: true, kind, label}
 }
 
+export type TrackTerminatedListener = (mediaStreamTrack: MediaStreamTrackFake) => void
+
 /**
  * The MediaStreamTrack interface represents a single media track within a stream;
  * typically, these are audio or video tracks, but other track types may exist as well.
@@ -26,16 +28,17 @@ export const initialMediaStreamTrackProperties = (
 export class MediaStreamTrackFake implements MediaStreamTrack {
   private trackEndedListeners: MediaStreamTrackEventListener[] = []
   private _onEndedListener: MediaStreamTrackEventListener | null = null
+  onTerminated: TrackTerminatedListener | null = null
 
   constructor(private readonly properties: MediaStreamTrackProperties) {}
 
   deviceRemoved() {
-    this.stop()
+    this.terminate()
     this.notifyEndedListeners()
   }
 
   permissionRevoked() {
-    this.stop()
+    this.terminate()
     this.notifyEndedListeners()
   }
 
@@ -252,7 +255,12 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
    * Immediately after calling stop(), the readyState property is set to ended.
    */
   stop(): void {
+    this.terminate()
+  }
+
+  private terminate() {
     this.properties.readyState = 'ended'
+    this.onTerminated?.(this)
   }
 
   private notifyEndedListeners() {

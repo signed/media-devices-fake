@@ -92,6 +92,12 @@ describe('MediaStreamTrackFake', () => {
       expect(track.readyState).toBe('ended')
       expect(onEnded).toHaveBeenCalled()
       expect(onEndedListener).toHaveBeenCalled()
+
+      const notCalledA2ndTime = jest.fn()
+      track.onended = notCalledA2ndTime
+
+      control.setPermissionFor('microphone', 'denied')
+      expect(notCalledA2ndTime).not.toHaveBeenCalled()
     })
   })
 
