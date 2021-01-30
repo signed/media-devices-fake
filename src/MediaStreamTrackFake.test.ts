@@ -55,7 +55,9 @@ describe('MediaStreamTrackFake', () => {
       const track = audioTracks[0]
 
       const onEnded = jest.fn()
-      const onEndedListener = jest.fn()
+      const onEndedListener = jest.fn(() => {
+        expect(track.readyState).toBe('ended')
+      })
       const removedOnEndedListener = jest.fn()
       track.onended = onEnded
       track.addEventListener('ended', onEndedListener)
@@ -64,6 +66,7 @@ describe('MediaStreamTrackFake', () => {
 
       control.remove(device)
 
+      expect(track.readyState).toBe('ended')
       expect(removedOnEndedListener).not.toHaveBeenCalled()
       expect(onEnded).toHaveBeenCalled()
       expect(onEndedListener).toHaveBeenCalled()
@@ -77,7 +80,9 @@ describe('MediaStreamTrackFake', () => {
       const track = audioTracks[0]
 
       const onEnded = jest.fn()
-      const onEndedListener = jest.fn()
+      const onEndedListener = jest.fn(() => {
+        expect(track.readyState).toBe('ended')
+      })
 
       track.onended = onEnded
       track.addEventListener('ended', onEndedListener)

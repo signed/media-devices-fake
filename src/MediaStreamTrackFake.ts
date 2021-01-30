@@ -30,6 +30,7 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
   constructor(private readonly properties: MediaStreamTrackProperties) {}
 
   deviceRemoved() {
+    this.stop()
     this.notifyEndedListeners()
   }
 
