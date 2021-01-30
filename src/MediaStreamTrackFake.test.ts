@@ -46,7 +46,7 @@ describe('MediaStreamTrackFake', () => {
 
   // https://w3c.github.io/mediacapture-main/getusermedia.html#event-mediastreamtrack-ended
   describe('is called', () => {
-    test('when the device is unplugged', async () => {
+    test('when the device is removed', async () => {
       const device = anyDevice({kind: 'audioinput'})
       const control = forgeMediaDevices(allAccessAllowed({attachedDevices: [device]}))
 
@@ -84,6 +84,7 @@ describe('MediaStreamTrackFake', () => {
 
       control.setPermissionFor('microphone', 'prompt')
 
+      expect(track.readyState).toBe('ended')
       expect(onEnded).toHaveBeenCalled()
       expect(onEndedListener).toHaveBeenCalled()
     })

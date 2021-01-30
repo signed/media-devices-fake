@@ -34,6 +34,7 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
   }
 
   permissionRevoked() {
+    this.stop()
     this.notifyEndedListeners()
   }
 
