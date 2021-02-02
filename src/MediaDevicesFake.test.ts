@@ -4,6 +4,7 @@ import './matchers/dom-exception'
 import './matchers/to-be-uuid'
 import './matchers/to-include-video-track'
 import {MediaDevicesFake} from './MediaDevicesFake'
+import {OpenMediaTracks} from './OpenMediaTracks'
 import {
   allConstraintsFalse,
   noDeviceWithDeviceId,
@@ -54,7 +55,7 @@ const runAndReport = async (fake: MediaDevicesFake, scenario: Scenario) => {
 describe('attach device', () => {
   let fake: MediaDevicesFake
   beforeEach(() => {
-    fake = new MediaDevicesFake(allPermissionsGranted())
+    fake = new MediaDevicesFake(allPermissionsGranted(), new OpenMediaTracks())
   })
 
   describe('attach', () => {
@@ -238,7 +239,7 @@ describe('attach device', () => {
 describe('enumerateDevices', () => {
   describe('still have to ask for device access', () => {
     test('label and deviceId in MediaDeviceInfo is set to empty string', async () => {
-      const fake = new MediaDevicesFake(stillHaveToAskForDeviceAccess())
+      const fake = new MediaDevicesFake(stillHaveToAskForDeviceAccess(), new OpenMediaTracks())
       fake.attach(anyMicrophone({label: 'The microphone', deviceId: 'microphone identifier'}))
       const devices = await fake.enumerateDevices()
       const microphone = devices[0]

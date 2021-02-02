@@ -19,12 +19,28 @@ export const initialMediaStreamTrackProperties = (
   return {id: uuidV4(), readyState: 'live', enabled: true, kind, label}
 }
 
+export type TrackTerminatedListener = (mediaStreamTrack: MediaStreamTrackFake) => void
+
 /**
  * The MediaStreamTrack interface represents a single media track within a stream;
  * typically, these are audio or video tracks, but other track types may exist as well.
  */
 export class MediaStreamTrackFake implements MediaStreamTrack {
+  private trackEndedListeners: MediaStreamTrackEventListener[] = []
+  private _onEndedListener: MediaStreamTrackEventListener | null = null
+  onTerminated: TrackTerminatedListener | null = null
+
   constructor(private readonly properties: MediaStreamTrackProperties) {}
+
+  deviceRemoved() {
+    this.terminate()
+    this.notifyEndedListeners()
+  }
+
+  permissionRevoked() {
+    this.terminate()
+    this.notifyEndedListeners()
+  }
 
   /**
    * The *`enabled`* property on the MediaStreamTrack interface is a Boolean value which is `true` if the track is allowed to render the source stream or `false` if it is not.
@@ -88,12 +104,12 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
     return this.properties.readyState
   }
 
-  set onended(_listener: MediaStreamTrackEventListener | null) {
-    throw notImplemented('set MediaStreamTrackFake.onended')
+  set onended(listener: MediaStreamTrackEventListener | null) {
+    this._onEndedListener = listener
   }
 
   get onended(): MediaStreamTrackEventListener | null {
-    throw notImplemented('get MediaStreamTrackFake.onended')
+    return this._onEndedListener
   }
 
   set onisolationchange(_listener: MediaStreamTrackEventListener | null) {
@@ -136,7 +152,14 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
     options?: boolean | AddEventListenerOptions
   ): void
   addEventListener(type: any, listener: any, options?: boolean | AddEventListenerOptions): void {
-    throw notImplemented('MediaStreamTrackFake.addEventListener()')
+    if (options) {
+      throw notImplemented('MediaStreamTrackFake.addEventListener() options argument')
+    }
+    if (type === 'ended') {
+      this.trackEndedListeners.push(listener)
+      return
+    }
+    throw notImplemented(`MediaStreamTrackFake.addEventListener() type: ${type}`)
   }
 
   removeEventListener<K extends keyof MediaStreamTrackEventMap>(
@@ -155,7 +178,17 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
     options?: EventListenerOptions | boolean
   ): void
   removeEventListener(type: any, listener: any, options?: boolean | EventListenerOptions): void {
-    throw notImplemented('MediaStreamTrackFake.removeEventListener()')
+    if (options) {
+      throw notImplemented('MediaStreamTrackFake.removeEventListener() options argument')
+    }
+    if (type === 'ended') {
+      const index = this.trackEndedListeners.indexOf(listener)
+      if (index >= 0) {
+        this.trackEndedListeners.splice(index, 1)
+      }
+      return
+    }
+    throw notImplemented(`MediaStreamTrackFake.removeEventListener() type: ${type}`)
   }
 
   dispatchEvent(event: Event): boolean {
@@ -222,6 +255,18 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
    * Immediately after calling stop(), the readyState property is set to ended.
    */
   stop(): void {
+    this.terminate()
+  }
+
+  private terminate() {
     this.properties.readyState = 'ended'
+    this.onTerminated?.(this)
+  }
+
+  private notifyEndedListeners() {
+    if (this._onEndedListener) {
+      this._onEndedListener.call(this, new Event('ended'))
+    }
+    this.trackEndedListeners.forEach((listener) => listener.call(this, new Event('ended')))
   }
 }
