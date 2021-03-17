@@ -1,4 +1,4 @@
-import {Deferred} from './Deffered'
+import {Deferred} from './Deferred'
 import {MediaDeviceDescription} from './MediaDeviceDescription'
 import {MediaDeviceInfoFake} from './MediaDeviceInfoFake'
 import {MediaStreamFake, mediaStreamId} from './MediaStreamFake'

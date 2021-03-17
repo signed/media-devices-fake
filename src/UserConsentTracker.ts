@@ -1,4 +1,4 @@
-import {Deferred} from './Deffered'
+import {Deferred} from './Deferred'
 import {notImplemented} from './not-implemented'
 import {PermissionStatusFake} from './permissions/PermissionStatusFake'
 
