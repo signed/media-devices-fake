@@ -1,4 +1,5 @@
 import { Deferred } from './Deferred'
+import { LocalListenerPropertySync } from './LocalListenerPropertySync'
 import { MediaDeviceDescription } from './MediaDeviceDescription'
 import { MediaDeviceInfoFake } from './MediaDeviceInfoFake'
 import { MediaStreamFake, mediaStreamId } from './MediaStreamFake'
@@ -118,13 +119,14 @@ const tryToOpenAStreamFor = (
 // https://github.com/fippo/dynamic-getUserMedia/blob/master/content.js
 export class MediaDevicesFake extends EventTarget implements MediaDevices {
   private readonly _deviceDescriptions: MediaDeviceDescription[] = []
-  private _onDeviceChangeListener: DeviceChangeListener | null = null
+  private readonly _onDeviceChangeListener: LocalListenerPropertySync<DeviceChangeListener>
 
   constructor(
     private readonly _userConsentTracker: UserConsentTracker,
     private readonly openMediaTracks: OpenMediaTracks,
   ) {
     super()
+    this._onDeviceChangeListener = new LocalListenerPropertySync<DeviceChangeListener>(this, 'devicechange')
   }
 
   private get devices(): MediaDeviceInfoFake[] {
@@ -144,19 +146,11 @@ export class MediaDevicesFake extends EventTarget implements MediaDevices {
   }
 
   get ondevicechange(): DeviceChangeListener | null {
-    return this._onDeviceChangeListener
+    return this._onDeviceChangeListener.get()
   }
 
   set ondevicechange(listener: DeviceChangeListener | null) {
-    const haveToRemoveOldListener = this._onDeviceChangeListener !== null && this._onDeviceChangeListener !== listener
-    if (haveToRemoveOldListener) {
-      this.removeEventListener('devicechange', this._onDeviceChangeListener)
-      this._onDeviceChangeListener = null
-    }
-    if (listener !== null) {
-      this.addEventListener('devicechange', listener)
-      this._onDeviceChangeListener = listener
-    }
+    this._onDeviceChangeListener.set(listener)
   }
 
   enumerateDevices(): Promise<MediaDeviceInfo[]> {
