@@ -1,12 +1,14 @@
-import { notImplemented } from '../not-implemented'
+import { LocalListenerPropertySync } from '../LocalListenerPropertySync'
 
 type OnChangeListener = (this: PermissionStatus, ev: Event) => any
 
-export class PermissionStatusFake implements PermissionStatus {
-  private readonly changeListeners: OnChangeListener[] = []
-  private _changeListener: OnChangeListener | null = null
+export class PermissionStatusFake extends EventTarget implements PermissionStatus {
+  private readonly _changeListener: LocalListenerPropertySync<OnChangeListener>
 
-  constructor(private _state: PermissionState) {}
+  constructor(private _state: PermissionState) {
+    super()
+    this._changeListener = new LocalListenerPropertySync<OnChangeListener>(this, 'change')
+  }
 
   get state(): PermissionState {
     return this._state
@@ -17,72 +19,14 @@ export class PermissionStatusFake implements PermissionStatus {
       return
     }
     this._state = updatedPermission
-    this._changeListener?.call(this, new Event('do not know yet'))
-    this.changeListeners.forEach((listener) => listener.call(this, new Event('do not know yet')))
+    this.dispatchEvent(new Event('change'))
   }
 
   set onchange(listener: OnChangeListener | null) {
-    this._changeListener = listener
+    this._changeListener.set(listener)
   }
 
   get onchange(): OnChangeListener | null {
-    return this._changeListener
-  }
-
-  addEventListener<K extends keyof PermissionStatusEventMap>(
-    type: K,
-    listener: (this: PermissionStatus, ev: PermissionStatusEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions,
-  ): void
-  addEventListener(
-    type: string,
-    listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions,
-  ): void
-  addEventListener(
-    type: string,
-    listener: EventListenerOrEventListenerObject | null,
-    options?: boolean | AddEventListenerOptions,
-  ): void
-  addEventListener(type: any, listener: any, options?: boolean | AddEventListenerOptions): void {
-    if (options) {
-      throw notImplemented('PermissionStatusFake.addEventListener() options argument')
-    }
-    if (type !== 'change') {
-      throw notImplemented(`PermissionStatusFake.addEventListener() type: ${type}`)
-    }
-    this.changeListeners.push(listener)
-  }
-
-  dispatchEvent(event: Event): boolean {
-    throw notImplemented('PermissionStatusFake.dispatchEvent()')
-  }
-
-  removeEventListener<K extends keyof PermissionStatusEventMap>(
-    type: K,
-    listener: (this: PermissionStatus, ev: PermissionStatusEventMap[K]) => any,
-    options?: boolean | EventListenerOptions,
-  ): void
-  removeEventListener(
-    type: string,
-    listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions,
-  ): void
-  removeEventListener(
-    type: string,
-    callback: EventListenerOrEventListenerObject | null,
-    options?: EventListenerOptions | boolean,
-  ): void
-  removeEventListener(type: any, listener: any, options?: boolean | EventListenerOptions): void {
-    if (options) {
-      throw notImplemented('PermissionStatusFake.removeEventListener() options argument')
-    }
-    if (type !== 'change') {
-      throw notImplemented(`PermissionStatusFake.removeEventListener() type: ${type}`)
-    }
-    const index = this.changeListeners.indexOf(listener)
-    if (index >= 0) {
-      this.changeListeners.splice(index, 1)
-    }
+    return this._changeListener.get()
   }
 }
