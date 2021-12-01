@@ -1,4 +1,4 @@
-export class LocalListenerPropertySync<T extends EventListener> {
+export class LocalListenerPropertySync<T extends EventListenerOrEventListenerObject> {
   private readonly type
   private _listener: T | null = null
 
