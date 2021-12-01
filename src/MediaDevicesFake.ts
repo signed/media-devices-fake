@@ -204,7 +204,11 @@ export class MediaDevicesFake implements MediaDevices {
   }
 
   dispatchEvent(event: Event): boolean {
-    throw notImplemented('MediaDevicesFake.dispatchEvent()')
+    if (event.type === 'devicechange') {
+      this.passEventToDeviceChangeListeners(event)
+      return event.defaultPrevented
+    }
+    throw notImplemented(`MediaDevicesFake.dispatchEvent() type: ${event.type}`)
   }
 
   enumerateDevices(): Promise<MediaDeviceInfo[]> {
@@ -270,7 +274,10 @@ ${JSON.stringify(toAdd, null, 2)}`)
   }
 
   private informDeviceChangeListener() {
-    const event = new Event('stand-in')
+    this.passEventToDeviceChangeListeners(new Event('devicechange'))
+  }
+
+  protected passEventToDeviceChangeListeners(event: Event) {
     if (this._onDeviceChangeListener) {
       this._onDeviceChangeListener(event)
     }

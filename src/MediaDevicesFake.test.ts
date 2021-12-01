@@ -234,6 +234,17 @@ describe('attach device', () => {
       expect(track.kind).toBe('audio')
     })
   })
+
+  describe('dispatch', () => {
+    test('forward devicechange events to the listeners', () => {
+      const ondevicechange = jest.fn()
+      const eventListener = jest.fn()
+      fake.ondevicechange = ondevicechange
+      fake.addEventListener('devicechange', eventListener)
+      fake.dispatchEvent(new Event('devicechange'))
+      expect(ondevicechange).toHaveBeenCalled()
+    })
+  })
 })
 
 describe('enumerateDevices', () => {
