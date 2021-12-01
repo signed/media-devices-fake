@@ -1,20 +1,15 @@
-import {Deferred} from './Deferred'
-import {MediaDeviceDescription} from './MediaDeviceDescription'
-import {MediaDeviceInfoFake} from './MediaDeviceInfoFake'
-import {MediaStreamFake, mediaStreamId} from './MediaStreamFake'
-import {
-  initialMediaStreamTrackProperties,
-  MediaStreamTrackFake,
-  TrackKind,
-} from './MediaStreamTrackFake'
-import {notImplemented} from './not-implemented'
-import {OpenMediaTracks} from './OpenMediaTracks'
-import {UserConsentTracker} from './UserConsentTracker'
+import { Deferred } from './Deferred'
+import { MediaDeviceDescription } from './MediaDeviceDescription'
+import { MediaDeviceInfoFake } from './MediaDeviceInfoFake'
+import { MediaStreamFake, mediaStreamId } from './MediaStreamFake'
+import { initialMediaStreamTrackProperties, MediaStreamTrackFake, TrackKind } from './MediaStreamTrackFake'
+import { notImplemented } from './not-implemented'
+import { OpenMediaTracks } from './OpenMediaTracks'
+import { UserConsentTracker } from './UserConsentTracker'
 
 type DeviceChangeListener = (this: MediaDevices, ev: Event) => any
-const descriptionMatching = (description: MediaDeviceDescription) => (
-  device: MediaDeviceDescription
-) => device.deviceId === description.deviceId && device.groupId === description.groupId
+const descriptionMatching = (description: MediaDeviceDescription) => (device: MediaDeviceDescription) =>
+  device.deviceId === description.deviceId && device.groupId === description.groupId
 
 const fit2 = (actual: string, ideal: string): number => (actual === ideal ? 0 : 1)
 
@@ -45,7 +40,7 @@ class ConstrainSet {
 
 const selectSettings = (
   mediaTrackConstraints: MediaTrackConstraints | boolean,
-  devices: MediaDeviceInfoFake[]
+  devices: MediaDeviceInfoFake[],
 ): MediaDeviceInfoFake | void => {
   const constraintSet = new ConstrainSet(mediaTrackConstraints)
   const viableDevice = devices
@@ -61,7 +56,7 @@ const selectSettings = (
 }
 
 const trackConstraintsFrom = (
-  constraints: MediaStreamConstraints
+  constraints: MediaStreamConstraints,
 ): {
   mediaTrackConstraints: boolean | MediaTrackConstraints
   trackKind: TrackKind
@@ -97,7 +92,7 @@ const tryToOpenAStreamFor = (
   trackKind: TrackKind,
   mediaTrackConstraints: boolean | MediaTrackConstraints,
   allDevices: MediaDeviceInfoFake[],
-  openMediaTracks: OpenMediaTracks
+  openMediaTracks: OpenMediaTracks,
 ): void => {
   const devices = allDevices.filter((device) => device.kind === deviceKind)
   if (devices.length === 0) {
@@ -109,9 +104,7 @@ const tryToOpenAStreamFor = (
     throw notImplemented('should this be an over constrained error?')
   }
 
-  const mediaTrack = new MediaStreamTrackFake(
-    initialMediaStreamTrackProperties(selectedDevice.label, trackKind)
-  )
+  const mediaTrack = new MediaStreamTrackFake(initialMediaStreamTrackProperties(selectedDevice.label, trackKind))
   openMediaTracks.track(selectedDevice, mediaTrack)
   mediaTrack.onTerminated = (track) => openMediaTracks.remove(track)
 
@@ -130,13 +123,13 @@ export class MediaDevicesFake implements MediaDevices {
 
   constructor(
     private readonly _userConsentTracker: UserConsentTracker,
-    private readonly openMediaTracks: OpenMediaTracks
+    private readonly openMediaTracks: OpenMediaTracks,
   ) {}
 
   private get devices(): MediaDeviceInfoFake[] {
     return this._deviceDescriptions
       .map((description) => {
-        const {kind} = description
+        const { kind } = description
         const accessAllowed = this._userConsentTracker.accessAllowedFor(kind)
         const deviceId = accessAllowed ? description.deviceId : ''
         const label = accessAllowed ? description.label : ''
@@ -160,17 +153,17 @@ export class MediaDevicesFake implements MediaDevices {
   addEventListener<K extends keyof MediaDevicesEventMap>(
     type: K,
     listener: (this: MediaDevices, ev: MediaDevicesEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject | null,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void
   addEventListener(type: any, listener: any, options?: boolean | AddEventListenerOptions): void {
     if (options) {
@@ -185,17 +178,17 @@ export class MediaDevicesFake implements MediaDevices {
   removeEventListener<K extends keyof MediaDevicesEventMap>(
     type: K,
     listener: (this: MediaDevices, ev: MediaDevicesEventMap[K]) => any,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void
   removeEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void
   removeEventListener(
     type: string,
     callback: EventListenerOrEventListenerObject | null,
-    options?: EventListenerOptions | boolean
+    options?: EventListenerOptions | boolean,
   ): void
   removeEventListener(type: any, listener: any, options?: boolean | EventListenerOptions): void {
     if (options) {
@@ -233,28 +226,19 @@ export class MediaDevicesFake implements MediaDevices {
     ) {
       return Promise.reject(
         new TypeError(
-          `Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested`
-        )
+          `Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested`,
+        ),
       )
     }
     if (constraints.audio !== undefined && constraints.video !== undefined) {
-      throw notImplemented(
-        'at the moment there is no support to request audio and video at the same time'
-      )
+      throw notImplemented('at the moment there is no support to request audio and video at the same time')
     }
-    const {mediaTrackConstraints, trackKind, deviceKind} = trackConstraintsFrom(constraints)
+    const { mediaTrackConstraints, trackKind, deviceKind } = trackConstraintsFrom(constraints)
     const deferred = new Deferred<MediaStream>()
     this._userConsentTracker.requestPermissionFor({
       deviceKind,
       granted: () => {
-        tryToOpenAStreamFor(
-          deferred,
-          deviceKind,
-          trackKind,
-          mediaTrackConstraints,
-          this.devices,
-          this.openMediaTracks
-        )
+        tryToOpenAStreamFor(deferred, deviceKind, trackKind, mediaTrackConstraints, this.devices, this.openMediaTracks)
       },
       blocked: () => {
         deferred.reject(new DOMException('Permission denied', 'NotAllowedError'))
@@ -273,7 +257,7 @@ export class MediaDevicesFake implements MediaDevices {
 ${JSON.stringify(toAdd, null, 2)}`)
     }
     // make a defensive copy to stop manipulation after attaching the device
-    this._deviceDescriptions.push({...toAdd})
+    this._deviceDescriptions.push({ ...toAdd })
     this.informDeviceChangeListener()
   }
 

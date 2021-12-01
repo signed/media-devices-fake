@@ -1,5 +1,5 @@
-import {notImplemented} from '../not-implemented'
-import {UserConsentTracker} from '../UserConsentTracker'
+import { notImplemented } from '../not-implemented'
+import { UserConsentTracker } from '../UserConsentTracker'
 
 export class PermissionsFake implements Permissions {
   constructor(private readonly consentTracker: UserConsentTracker) {}
@@ -9,7 +9,7 @@ export class PermissionsFake implements Permissions {
       | PermissionDescriptor
       | DevicePermissionDescriptor
       | MidiPermissionDescriptor
-      | PushPermissionDescriptor
+      | PushPermissionDescriptor,
   ): Promise<PermissionStatus> {
     const kind = permissionDesc.name
     if (kind !== 'camera' && kind !== 'microphone') {

@@ -1,7 +1,7 @@
 import './matchers/to-be-uuid'
-import {allAccessAllowed, anyDevice, forgeMediaDevices} from './index'
-import {initialMediaStreamTrackProperties, MediaStreamTrackFake} from './MediaStreamTrackFake'
-import {anyTrackKind} from './MediaStreamTrackMother'
+import { allAccessAllowed, anyDevice, forgeMediaDevices } from './index'
+import { initialMediaStreamTrackProperties, MediaStreamTrackFake } from './MediaStreamTrackFake'
+import { anyTrackKind } from './MediaStreamTrackMother'
 
 describe('MediaStreamTrackFake', () => {
   let track: MediaStreamTrackFake
@@ -47,10 +47,10 @@ describe('MediaStreamTrackFake', () => {
   // https://w3c.github.io/mediacapture-main/getusermedia.html#event-mediastreamtrack-ended
   describe('is called', () => {
     test('when the device is removed', async () => {
-      const device = anyDevice({kind: 'audioinput'})
-      const control = forgeMediaDevices(allAccessAllowed({attachedDevices: [device]}))
+      const device = anyDevice({ kind: 'audioinput' })
+      const control = forgeMediaDevices(allAccessAllowed({ attachedDevices: [device] }))
 
-      const mediaStream = await control.mediaDevices.getUserMedia({audio: true})
+      const mediaStream = await control.mediaDevices.getUserMedia({ audio: true })
       const audioTracks = mediaStream.getAudioTracks()
       const track = audioTracks[0]
 
@@ -72,10 +72,10 @@ describe('MediaStreamTrackFake', () => {
       expect(onEndedListener).toHaveBeenCalled()
     })
     test('when the device permission is revoked', async () => {
-      const device = anyDevice({kind: 'audioinput'})
-      const control = forgeMediaDevices(allAccessAllowed({attachedDevices: [device]}))
+      const device = anyDevice({ kind: 'audioinput' })
+      const control = forgeMediaDevices(allAccessAllowed({ attachedDevices: [device] }))
 
-      const mediaStream = await control.mediaDevices.getUserMedia({audio: true})
+      const mediaStream = await control.mediaDevices.getUserMedia({ audio: true })
       const audioTracks = mediaStream.getAudioTracks()
       const track = audioTracks[0]
 

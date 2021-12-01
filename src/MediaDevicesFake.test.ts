@@ -1,10 +1,10 @@
 import 'jest-extended'
-import {anyCamera, anyDevice, anyMicrophone} from './DeviceMother'
+import { anyCamera, anyDevice, anyMicrophone } from './DeviceMother'
 import './matchers/dom-exception'
 import './matchers/to-be-uuid'
 import './matchers/to-include-video-track'
-import {MediaDevicesFake} from './MediaDevicesFake'
-import {OpenMediaTracks} from './OpenMediaTracks'
+import { MediaDevicesFake } from './MediaDevicesFake'
+import { OpenMediaTracks } from './OpenMediaTracks'
 import {
   allConstraintsFalse,
   noDeviceWithDeviceId,
@@ -12,7 +12,7 @@ import {
   requestedDeviceTypeNotAttached,
   Scenario,
 } from './Scenarios'
-import {UserConsentTracker} from './UserConsentTracker'
+import { UserConsentTracker } from './UserConsentTracker'
 
 const allPermissionsGranted = () => {
   return new UserConsentTracker({
@@ -37,7 +37,7 @@ const runAndReport = async (fake: MediaDevicesFake, scenario: Scenario) => {
         what: check.what,
         details: await check.predicate(stream),
       }
-    })
+    }),
   )
 
   return results
@@ -101,8 +101,8 @@ describe('attach device', () => {
       })
     })
     test('rejects adding two devices with the same groupId:deviceId', () => {
-      const one = anyDevice({groupId: 'group id', deviceId: 'device id'})
-      const two = anyDevice({groupId: 'group id', deviceId: 'device id'})
+      const one = anyDevice({ groupId: 'group id', deviceId: 'device id' })
+      const two = anyDevice({ groupId: 'group id', deviceId: 'device id' })
       fake.attach(one)
       expect(() => fake.attach(two)).toThrow()
     })
@@ -137,8 +137,8 @@ describe('attach device', () => {
         const stream = fake.getUserMedia()
         return expect(stream).rejects.toThrow(
           new TypeError(
-            `Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested`
-          )
+            `Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested`,
+          ),
         )
       })
       test('scenario', async () => {
@@ -151,8 +151,8 @@ describe('attach device', () => {
         const stream = fake.getUserMedia(allConstraintsFalse.constraints)
         return expect(stream).rejects.toThrow(
           new TypeError(
-            `Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested`
-          )
+            `Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested`,
+          ),
         )
       })
       test('scenario', async () => {
@@ -174,8 +174,8 @@ describe('attach device', () => {
       const stream = fake.getUserMedia({})
       return expect(stream).rejects.toThrow(
         new TypeError(
-          `Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested`
-        )
+          `Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested`,
+        ),
       )
     })
 
@@ -193,23 +193,23 @@ describe('attach device', () => {
 
     test('return track for an attached camera', async () => {
       fake.attach(anyCamera())
-      const stream = await fake.getUserMedia({video: true})
+      const stream = await fake.getUserMedia({ video: true })
 
       expect(stream).toIncludeVideoTrack()
     })
 
     describe('return another device of the same kind in case no device with the given id is attached', () => {
       test('scenario', async () => {
-        fake.attach(anyCamera({deviceId: 'actually connected'}))
+        fake.attach(anyCamera({ deviceId: 'actually connected' }))
         expect(await runAndReport(fake, noDeviceWithDeviceId)).toBe('')
       })
     })
 
     test('return videoinput with matching device id', async () => {
-      fake.attach(anyCamera({deviceId: 'not this one'}))
-      fake.attach(anyCamera({deviceId: 'attached', label: 'match'}))
-      fake.attach(anyCamera({deviceId: 'nope'}))
-      const stream = await fake.getUserMedia({video: {deviceId: 'attached'}})
+      fake.attach(anyCamera({ deviceId: 'not this one' }))
+      fake.attach(anyCamera({ deviceId: 'attached', label: 'match' }))
+      fake.attach(anyCamera({ deviceId: 'nope' }))
+      const stream = await fake.getUserMedia({ video: { deviceId: 'attached' } })
       expect(stream).toBeDefined()
       expect(stream.getTracks()).toHaveLength(1)
       const track = stream.getVideoTracks()[0]
@@ -220,10 +220,10 @@ describe('attach device', () => {
       expect(track.kind).toBe('video')
     })
     test('return audioinput with matching device id', async () => {
-      fake.attach(anyMicrophone({deviceId: 'not this one'}))
-      fake.attach(anyMicrophone({deviceId: 'attached', label: 'match'}))
-      fake.attach(anyMicrophone({deviceId: 'nope'}))
-      const stream = await fake.getUserMedia({audio: {deviceId: 'attached'}})
+      fake.attach(anyMicrophone({ deviceId: 'not this one' }))
+      fake.attach(anyMicrophone({ deviceId: 'attached', label: 'match' }))
+      fake.attach(anyMicrophone({ deviceId: 'nope' }))
+      const stream = await fake.getUserMedia({ audio: { deviceId: 'attached' } })
       expect(stream).toBeDefined()
       expect(stream.getTracks()).toHaveLength(1)
       const track = stream.getAudioTracks()[0]
@@ -240,7 +240,7 @@ describe('enumerateDevices', () => {
   describe('still have to ask for device access', () => {
     test('label and deviceId in MediaDeviceInfo is set to empty string', async () => {
       const fake = new MediaDevicesFake(stillHaveToAskForDeviceAccess(), new OpenMediaTracks())
-      fake.attach(anyMicrophone({label: 'The microphone', deviceId: 'microphone identifier'}))
+      fake.attach(anyMicrophone({ label: 'The microphone', deviceId: 'microphone identifier' }))
       const devices = await fake.enumerateDevices()
       const microphone = devices[0]
       expect(microphone.label).toEqual('')

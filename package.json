@@ -47,6 +47,7 @@
     "@babel/core": "7.16.0",
     "@babel/preset-env": "7.16.4",
     "@babel/preset-typescript": "7.16.0",
+    "@signed/prettier-config": "0.1.0",
     "@types/jest": "27.0.3",
     "concurrently": "6.4.0",
     "jest": "27.4.3",
@@ -60,5 +61,6 @@
     "setupFilesAfterEnv": [
       "jest-extended/all"
     ]
-  }
+  },
+  "prettier": "@signed/prettier-config"
 }

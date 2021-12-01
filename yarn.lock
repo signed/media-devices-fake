@@ -1116,6 +1116,11 @@
     "@types/yargs" "^16.0.0"
     chalk "^4.0.0"
 
+"@signed/prettier-config@0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@signed/prettier-config/-/prettier-config-0.1.0.tgz#4e1ab02f34fd4e43af2779aac97225738ccc71c6"
+  integrity sha512-gMob/Xh26ksh7Z3l/65WGHip9iuC5Jp6jUPxhLJcHEvfPntnRSjxfS2dzBQa/xW2q8zpCEHFNpf5T4IGqUB6LQ==
+
 "@sinonjs/commons@^1.7.0":
   version "1.8.3"
   resolved "https://registry.yarnpkg.com/@sinonjs/commons/-/commons-1.8.3.tgz#3802ddd21a50a949b6721ddd72da36e67e7f1b2d"

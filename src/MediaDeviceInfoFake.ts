@@ -1,5 +1,5 @@
-import {MediaDeviceDescription} from './MediaDeviceDescription'
-import {notImplemented} from './not-implemented'
+import { MediaDeviceDescription } from './MediaDeviceDescription'
+import { notImplemented } from './not-implemented'
 
 export class MediaDeviceInfoFake implements MediaDeviceInfo {
   constructor(private readonly mediaDeviceDescription: MediaDeviceDescription) {}

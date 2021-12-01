@@ -1,6 +1,6 @@
 import 'jest-extended'
-import {MediaStreamFake, mediaStreamId} from './MediaStreamFake'
-import {anyMediaStreamTrack} from './MediaStreamTrackMother'
+import { MediaStreamFake, mediaStreamId } from './MediaStreamFake'
+import { anyMediaStreamTrack } from './MediaStreamTrackMother'
 
 describe('MediaStreamFake', () => {
   test('create a new one', () => {
@@ -14,7 +14,7 @@ describe('MediaStreamFake', () => {
   })
 
   test('derive active state from contained tracks', () => {
-    const liveTrack = anyMediaStreamTrack({readyState: 'live'})
+    const liveTrack = anyMediaStreamTrack({ readyState: 'live' })
     const fake = new MediaStreamFake(mediaStreamId(), [liveTrack])
     expect(fake.active).toBe(true)
     liveTrack.stop()
@@ -22,15 +22,15 @@ describe('MediaStreamFake', () => {
   })
 
   test('filtered tracks', () => {
-    const audioTrack = anyMediaStreamTrack({kind: 'audio'})
-    const videoTrack = anyMediaStreamTrack({kind: 'video'})
+    const audioTrack = anyMediaStreamTrack({ kind: 'audio' })
+    const videoTrack = anyMediaStreamTrack({ kind: 'video' })
     const fake = new MediaStreamFake(mediaStreamId(), [audioTrack, videoTrack])
     expect(fake.getAudioTracks()).toEqual([audioTrack])
     expect(fake.getVideoTracks()).toEqual([videoTrack])
   })
 
   test('return track by id', () => {
-    const wantedTrack = anyMediaStreamTrack({id: 'wanted'})
+    const wantedTrack = anyMediaStreamTrack({ id: 'wanted' })
     const fake = new MediaStreamFake(mediaStreamId(), [wantedTrack])
     expect(fake.getTrackById('bogus')).toBe(null)
     expect(fake.getTrackById('wanted')).toBe(wantedTrack)

@@ -1,6 +1,6 @@
-import {Deferred} from './Deferred'
-import {notImplemented} from './not-implemented'
-import {PermissionStatusFake} from './permissions/PermissionStatusFake'
+import { Deferred } from './Deferred'
+import { notImplemented } from './not-implemented'
+import { PermissionStatusFake } from './permissions/PermissionStatusFake'
 
 export enum RequestedMediaInput {
   Microphone = 'Microphone',
@@ -54,16 +54,12 @@ export class UserConsentTracker {
 
   setPermissionFor(kind: keyof UserConsent, state: PermissionState) {
     this._userConsent[kind] = state
-    this._trackedPermissionStatus[kind].forEach((permissionStatus) =>
-      permissionStatus.updateTo(state)
-    )
+    this._trackedPermissionStatus[kind].forEach((permissionStatus) => permissionStatus.updateTo(state))
   }
 
   requestPermissionFor(permissionRequest: PermissionRequest) {
     if (this._pendingPermissionRequest) {
-      throw notImplemented(
-        'There is already a pending permission request, not sure if this can happen'
-      )
+      throw notImplemented('There is already a pending permission request, not sure if this can happen')
     }
     if (this.permissionGrantedFor(permissionRequest.deviceKind)) {
       permissionRequest.granted()
@@ -116,9 +112,7 @@ export class UserConsentTracker {
           const updatedPermission = resultingPermissionStateFor(action)
           if (this._pendingPermissionRequest.deviceKind === 'audioinput') {
             this._userConsent.microphone = updatedPermission
-            this._trackedPermissionStatus.microphone.forEach((fake) =>
-              fake.updateTo(updatedPermission)
-            )
+            this._trackedPermissionStatus.microphone.forEach((fake) => fake.updateTo(updatedPermission))
           }
           if (this._pendingPermissionRequest.deviceKind === 'videoinput') {
             this._userConsent.camera = updatedPermission
@@ -132,9 +126,7 @@ export class UserConsentTracker {
       }
       if (timeWaited >= maximumWaitTime) {
         deferred.reject(
-          new Error(
-            `After waiting for ${maximumWaitTime} ms there still is no pending permission request`
-          )
+          new Error(`After waiting for ${maximumWaitTime} ms there still is no pending permission request`),
         )
         return
       }
@@ -151,7 +143,7 @@ export class UserConsentTracker {
 
   private permissionPromptFor(
     permissionRequest: PermissionRequest,
-    complete: (action: PermissionPromptAction) => void
+    complete: (action: PermissionPromptAction) => void,
   ) {
     const requestedPermissions: RequestedMediaInput[] = []
     if (permissionRequest.deviceKind === 'videoinput' && !this.permissionGrantedFor('videoinput')) {

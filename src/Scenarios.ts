@@ -1,20 +1,16 @@
-export type MediaStreamCheckResult = {success: boolean; messages?: Array<string>}
+export type MediaStreamCheckResult = { success: boolean; messages?: Array<string> }
 type MediaStreamPredicate = (mediaStream: MediaStream) => MediaStreamCheckResult
 type ErrorPredicate = (error: Error) => MediaStreamCheckResult
-type MediaStreamPromisePredicate = (
-  mediaStream: Promise<MediaStream>
-) => Promise<MediaStreamCheckResult>
+type MediaStreamPromisePredicate = (mediaStream: Promise<MediaStream>) => Promise<MediaStreamCheckResult>
 
-const mediaStream: (input: MediaStreamPredicate) => MediaStreamPromisePredicate = (
-  input: MediaStreamPredicate
-) => {
+const mediaStream: (input: MediaStreamPredicate) => MediaStreamPromisePredicate = (input: MediaStreamPredicate) => {
   return async (promise: Promise<MediaStream>) => input(await promise)
 }
 const error: (input: ErrorPredicate) => MediaStreamPromisePredicate = (input: ErrorPredicate) => {
   return async (promise: Promise<MediaStream>) => {
     try {
       await promise
-      return {success: false, messages: ['expected a rejected promise']}
+      return { success: false, messages: ['expected a rejected promise'] }
     } catch (e) {
       return input(e)
     }
@@ -55,7 +51,7 @@ export const passUndefined: Scenario = {
           predicate: error((err) => {
             const success = err instanceof TypeError
             const messages = [`got: ${err.toString()}`]
-            return {success, messages}
+            return { success, messages }
           }),
         },
         {
@@ -64,7 +60,7 @@ export const passUndefined: Scenario = {
             const expected = `Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested`
             const success = err.message === expected
             const messages = [`expected: ${expected}`, `got: '${err.message}'`]
-            return {success, messages}
+            return { success, messages }
           }),
         },
       ],
@@ -75,7 +71,7 @@ export const passUndefined: Scenario = {
 export const requestedDeviceTypeNotAttached: Scenario = {
   summary: 'requested device type not attached',
   description: 'Requesting a camera but none is attached',
-  constraints: {video: true},
+  constraints: { video: true },
   expected: {
     prompt: undefined,
     denied: undefined,
@@ -87,7 +83,7 @@ export const requestedDeviceTypeNotAttached: Scenario = {
           predicate: error((err) => {
             const success = err instanceof DOMException
             const messages = [`got: ${err.toString()}`]
-            return {success, messages}
+            return { success, messages }
           }),
         },
         {
@@ -96,7 +92,7 @@ export const requestedDeviceTypeNotAttached: Scenario = {
             const expected = `Requested device not found`
             const success = err.message === expected
             const messages = [`expected: ${expected}`, `got: '${err.message}'`]
-            return {success, messages}
+            return { success, messages }
           }),
         },
       ],
@@ -122,7 +118,7 @@ export const allConstraintsFalse: Scenario = {
           predicate: error((err) => {
             const success = err instanceof TypeError
             const messages = [`got: ${err.toString()}`]
-            return {success, messages}
+            return { success, messages }
           }),
         },
         {
@@ -131,7 +127,7 @@ export const allConstraintsFalse: Scenario = {
             const expected = `Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested`
             const success = err.message === expected
             const messages = [`expected: ${expected}`, `got: '${err.message}'`]
-            return {success, messages}
+            return { success, messages }
           }),
         },
       ],
@@ -142,7 +138,7 @@ export const allConstraintsFalse: Scenario = {
 export const noDeviceWithDeviceId: Scenario = {
   summary: 'bogus device id',
   description: 'the constraint contains a deviceId that no device has',
-  constraints: {video: {deviceId: 'bogus'}},
+  constraints: { video: { deviceId: 'bogus' } },
   expected: {
     prompt: undefined,
     denied: undefined,
@@ -153,14 +149,14 @@ export const noDeviceWithDeviceId: Scenario = {
           what: 'stream is active',
           predicate: mediaStream((stream) => {
             const success = stream.active
-            return {success}
+            return { success }
           }),
         },
         {
           what: 'stream has an id',
           predicate: mediaStream((stream) => {
             const success = stream.id.length > 0
-            return {success}
+            return { success }
           }),
         },
       ],
@@ -171,7 +167,7 @@ export const noDeviceWithDeviceId: Scenario = {
 export const existingDevice: Scenario = {
   summary: 'existing device',
   description: 'any camera device without any other constraints',
-  constraints: {video: true},
+  constraints: { video: true },
   expected: {
     prompt: undefined,
     denied: {
@@ -182,7 +178,7 @@ export const existingDevice: Scenario = {
           predicate: error((error) => {
             const success = error instanceof DOMException
             const messages = [`got: ${error.constructor.name}`]
-            return {success, messages}
+            return { success, messages }
           }),
         },
         {
@@ -191,7 +187,7 @@ export const existingDevice: Scenario = {
             const actual = error.name
             const success = actual === 'NotAllowedError'
             const messages = [`got: ${actual}`]
-            return {success, messages}
+            return { success, messages }
           }),
         },
       ],

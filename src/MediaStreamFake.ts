@@ -1,5 +1,5 @@
-import {MediaStreamTrackFake} from './MediaStreamTrackFake'
-import {notImplemented} from './not-implemented'
+import { MediaStreamTrackFake } from './MediaStreamTrackFake'
+import { notImplemented } from './not-implemented'
 
 export type MediaStreamEventListener = (this: MediaStream, ev: MediaStreamTrackEvent) => any
 
@@ -13,10 +13,7 @@ export const mediaStreamId = () => {
 }
 
 export class MediaStreamFake implements MediaStream {
-  constructor(
-    private readonly _id: string,
-    private readonly mediaTracks: Array<MediaStreamTrackFake>
-  ) {}
+  constructor(private readonly _id: string, private readonly mediaTracks: Array<MediaStreamTrackFake>) {}
 
   /**
    * A Boolean value that returns true if the MediaStream is active, or false otherwise.
@@ -53,17 +50,17 @@ export class MediaStreamFake implements MediaStream {
   addEventListener<K extends keyof MediaStreamEventMap>(
     type: K,
     listener: (this: MediaStream, ev: MediaStreamEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject | null,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void
   addEventListener(type: any, listener: any, options?: boolean | AddEventListenerOptions): void {
     throw notImplemented('MediaStreamFake.addEventListener()')
@@ -72,17 +69,17 @@ export class MediaStreamFake implements MediaStream {
   removeEventListener<K extends keyof MediaStreamEventMap>(
     type: K,
     listener: (this: MediaStream, ev: MediaStreamEventMap[K]) => any,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void
   removeEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void
   removeEventListener(
     type: string,
     callback: EventListenerOrEventListenerObject | null,
-    options?: EventListenerOptions | boolean
+    options?: EventListenerOptions | boolean,
   ): void
   removeEventListener(type: any, listener: any, options?: boolean | EventListenerOptions): void {
     throw notImplemented('MediaStreamFake.removeEventListener()')

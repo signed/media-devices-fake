@@ -2,7 +2,7 @@
 
 ## unplugging active devices
 
-## support for composite devices 
+## support for composite devices
 
 ## default device
 
@@ -22,12 +22,9 @@ There are some old and new changes to device handling to make the chrome impleme
 
 - Error handling for different browsers (spec compliance is still not 100%)
 
-
 # expose passed constraints to PermissionPrompt
 
 Currently, there is no api to access the actual constrains passed to `getUserMedia`.
-
-
 
 # support for different constraints
 

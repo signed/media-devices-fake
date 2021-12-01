@@ -1,4 +1,4 @@
-import {notImplemented} from '../not-implemented'
+import { notImplemented } from '../not-implemented'
 
 type OnChangeListener = (this: PermissionStatus, ev: Event) => any
 
@@ -32,17 +32,17 @@ export class PermissionStatusFake implements PermissionStatus {
   addEventListener<K extends keyof PermissionStatusEventMap>(
     type: K,
     listener: (this: PermissionStatus, ev: PermissionStatusEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject | null,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void
   addEventListener(type: any, listener: any, options?: boolean | AddEventListenerOptions): void {
     if (options) {
@@ -61,17 +61,17 @@ export class PermissionStatusFake implements PermissionStatus {
   removeEventListener<K extends keyof PermissionStatusEventMap>(
     type: K,
     listener: (this: PermissionStatus, ev: PermissionStatusEventMap[K]) => any,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void
   removeEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void
   removeEventListener(
     type: string,
     callback: EventListenerOrEventListenerObject | null,
-    options?: EventListenerOptions | boolean
+    options?: EventListenerOptions | boolean,
   ): void
   removeEventListener(type: any, listener: any, options?: boolean | EventListenerOptions): void {
     if (options) {

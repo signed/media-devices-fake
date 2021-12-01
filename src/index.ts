@@ -1,10 +1,10 @@
-export {MediaDeviceDescription} from './MediaDeviceDescription'
-export {anyMicrophone, anyCamera, anyDevice} from './DeviceMother'
-export {PermissionPrompt, PermissionPromptAction, RequestedMediaInput} from './UserConsentTracker'
-import {MediaDeviceDescription} from './MediaDeviceDescription'
-import {MediaDevicesFake} from './MediaDevicesFake'
-import {OpenMediaTracks} from './OpenMediaTracks'
-import {PermissionsFake} from './permissions/PermissionsFake'
+export { MediaDeviceDescription } from './MediaDeviceDescription'
+export { anyMicrophone, anyCamera, anyDevice } from './DeviceMother'
+export { PermissionPrompt, PermissionPromptAction, RequestedMediaInput } from './UserConsentTracker'
+import { MediaDeviceDescription } from './MediaDeviceDescription'
+import { MediaDevicesFake } from './MediaDevicesFake'
+import { OpenMediaTracks } from './OpenMediaTracks'
+import { PermissionsFake } from './permissions/PermissionsFake'
 import {
   allConstraintsFalse,
   existingDevice,
@@ -13,7 +13,7 @@ import {
   requestedDeviceTypeNotAttached,
   scenarios as all,
 } from './Scenarios'
-import {PermissionPrompt, UserConsentTracker} from './UserConsentTracker'
+import { PermissionPrompt, UserConsentTracker } from './UserConsentTracker'
 
 export type InitialSetup = {
   attachedDevices?: MediaDeviceDescription[]
@@ -23,9 +23,7 @@ export type InitialSetup = {
 
 type InitialSetupWithoutPermissions = Omit<InitialSetup, 'microphone' | 'camera'>
 
-export const stillHaveToAskForDeviceAccess = (
-  additional: InitialSetupWithoutPermissions = {}
-): InitialSetup => {
+export const stillHaveToAskForDeviceAccess = (additional: InitialSetupWithoutPermissions = {}): InitialSetup => {
   return {
     microphone: 'prompt',
     camera: 'prompt',
@@ -68,7 +66,7 @@ export interface MediaDevicesControl {
 export const forgeMediaDevices = (initial: InitialSetup = {}): MediaDevicesControl => {
   const camera = initial.camera ?? 'prompt'
   const microphone = initial.microphone ?? 'prompt'
-  const consentTracker = new UserConsentTracker({camera, microphone})
+  const consentTracker = new UserConsentTracker({ camera, microphone })
   const openMediaTracks = new OpenMediaTracks()
   const mediaDevicesFake = new MediaDevicesFake(consentTracker, openMediaTracks)
   const permissionsFake = new PermissionsFake(consentTracker)
@@ -112,7 +110,7 @@ export const forgeMediaDevices = (initial: InitialSetup = {}): MediaDevicesContr
 }
 
 // todo testrig should be moved here
-export {MediaStreamCheckResult, Scenario} from './Scenarios'
+export { MediaStreamCheckResult, Scenario } from './Scenarios'
 
 export const scenarios = {
   all,

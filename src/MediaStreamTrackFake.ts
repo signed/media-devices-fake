@@ -1,5 +1,5 @@
-import {notImplemented} from './not-implemented'
-import {uuidV4} from './uuid'
+import { notImplemented } from './not-implemented'
+import { uuidV4 } from './uuid'
 
 type MediaStreamTrackEventListener = (this: MediaStreamTrack, ev: Event) => any
 export type TrackKind = 'audio' | 'video'
@@ -12,11 +12,8 @@ export interface MediaStreamTrackProperties {
   label: string
 }
 
-export const initialMediaStreamTrackProperties = (
-  label: string,
-  kind: TrackKind
-): MediaStreamTrackProperties => {
-  return {id: uuidV4(), readyState: 'live', enabled: true, kind, label}
+export const initialMediaStreamTrackProperties = (label: string, kind: TrackKind): MediaStreamTrackProperties => {
+  return { id: uuidV4(), readyState: 'live', enabled: true, kind, label }
 }
 
 export type TrackTerminatedListener = (mediaStreamTrack: MediaStreamTrackFake) => void
@@ -139,17 +136,17 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
   addEventListener<K extends keyof MediaStreamTrackEventMap>(
     type: K,
     listener: (this: MediaStreamTrack, ev: MediaStreamTrackEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject | null,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void
   addEventListener(type: any, listener: any, options?: boolean | AddEventListenerOptions): void {
     if (options) {
@@ -165,17 +162,17 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
   removeEventListener<K extends keyof MediaStreamTrackEventMap>(
     type: K,
     listener: (this: MediaStreamTrack, ev: MediaStreamTrackEventMap[K]) => any,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void
   removeEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void
   removeEventListener(
     type: string,
     callback: EventListenerOrEventListenerObject | null,
-    options?: EventListenerOptions | boolean
+    options?: EventListenerOptions | boolean,
   ): void
   removeEventListener(type: any, listener: any, options?: boolean | EventListenerOptions): void {
     if (options) {
