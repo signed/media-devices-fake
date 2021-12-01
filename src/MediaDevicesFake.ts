@@ -116,15 +116,16 @@ const tryToOpenAStreamFor = (
 
 // this looks interesting
 // https://github.com/fippo/dynamic-getUserMedia/blob/master/content.js
-export class MediaDevicesFake implements MediaDevices {
-  private readonly deviceChangeListeners: DeviceChangeListener[] = []
+export class MediaDevicesFake extends EventTarget implements MediaDevices {
   private readonly _deviceDescriptions: MediaDeviceDescription[] = []
   private _onDeviceChangeListener: DeviceChangeListener | null = null
 
   constructor(
     private readonly _userConsentTracker: UserConsentTracker,
     private readonly openMediaTracks: OpenMediaTracks,
-  ) {}
+  ) {
+    super()
+  }
 
   private get devices(): MediaDeviceInfoFake[] {
     return this._deviceDescriptions
@@ -147,68 +148,15 @@ export class MediaDevicesFake implements MediaDevices {
   }
 
   set ondevicechange(listener: DeviceChangeListener | null) {
-    this._onDeviceChangeListener = listener
-  }
-
-  addEventListener<K extends keyof MediaDevicesEventMap>(
-    type: K,
-    listener: (this: MediaDevices, ev: MediaDevicesEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions,
-  ): void
-  addEventListener(
-    type: string,
-    listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions,
-  ): void
-  addEventListener(
-    type: string,
-    listener: EventListenerOrEventListenerObject | null,
-    options?: boolean | AddEventListenerOptions,
-  ): void
-  addEventListener(type: any, listener: any, options?: boolean | AddEventListenerOptions): void {
-    if (options) {
-      throw notImplemented('MediaDevicesFake.addEventListener() options argument')
+    const haveToRemoveOldListener = this._onDeviceChangeListener !== null && this._onDeviceChangeListener !== listener
+    if (haveToRemoveOldListener) {
+      this.removeEventListener('devicechange', this._onDeviceChangeListener)
+      this._onDeviceChangeListener = null
     }
-    if (type !== 'devicechange') {
-      throw notImplemented(`MediaDevicesFake.addEventListener() type: ${type}`)
+    if (listener !== null) {
+      this.addEventListener('devicechange', listener)
+      this._onDeviceChangeListener = listener
     }
-    this.deviceChangeListeners.push(listener)
-  }
-
-  removeEventListener<K extends keyof MediaDevicesEventMap>(
-    type: K,
-    listener: (this: MediaDevices, ev: MediaDevicesEventMap[K]) => any,
-    options?: boolean | EventListenerOptions,
-  ): void
-  removeEventListener(
-    type: string,
-    listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions,
-  ): void
-  removeEventListener(
-    type: string,
-    callback: EventListenerOrEventListenerObject | null,
-    options?: EventListenerOptions | boolean,
-  ): void
-  removeEventListener(type: any, listener: any, options?: boolean | EventListenerOptions): void {
-    if (options) {
-      throw notImplemented('MediaDevicesFake.removeEventListener() options argument')
-    }
-    if (type !== 'devicechange') {
-      throw notImplemented(`MediaDevicesFake.removeEventListener() type: ${type}`)
-    }
-    const index = this.deviceChangeListeners.indexOf(listener)
-    if (index >= 0) {
-      this.deviceChangeListeners.splice(index, 1)
-    }
-  }
-
-  dispatchEvent(event: Event): boolean {
-    if (event.type === 'devicechange') {
-      this.passEventToDeviceChangeListeners(event)
-      return event.defaultPrevented
-    }
-    throw notImplemented(`MediaDevicesFake.dispatchEvent() type: ${event.type}`)
   }
 
   enumerateDevices(): Promise<MediaDeviceInfo[]> {
@@ -274,13 +222,6 @@ ${JSON.stringify(toAdd, null, 2)}`)
   }
 
   private informDeviceChangeListener() {
-    this.passEventToDeviceChangeListeners(new Event('devicechange'))
-  }
-
-  protected passEventToDeviceChangeListeners(event: Event) {
-    if (this._onDeviceChangeListener) {
-      this._onDeviceChangeListener(event)
-    }
-    this.deviceChangeListeners.forEach((listener) => listener.call(this, event))
+    this.dispatchEvent(new Event('devicechange'))
   }
 }
