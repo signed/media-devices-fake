@@ -51,8 +51,8 @@ export const allAccessBlocked = (additional: InitialSetupWithoutPermissions = {}
 }
 
 export interface MediaDevicesControl {
-  mediaDevices: MediaDevices
-  permissions: Permissions
+  readonly mediaDevices: MediaDevices
+  readonly permissions: Permissions
 
   attach(toAdd: MediaDeviceDescription): void
 
