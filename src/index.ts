@@ -54,6 +54,10 @@ export interface MediaDevicesControl {
   readonly mediaDevices: MediaDevices
   readonly permissions: Permissions
 
+  installInto(target: Window): void
+
+  uninstall(): void
+
   attach(toAdd: MediaDeviceDescription): void
 
   remove(toRemove: MediaDeviceDescription): void
@@ -74,12 +78,37 @@ export const forgeMediaDevices = (initial: InitialSetup = {}): MediaDevicesContr
   attachedDevices.forEach((device) => mediaDevicesFake.attach(device))
 
   return new (class implements MediaDevicesControl {
+    private _target: Window | null = null
+    private _mediaDevicesBackup: MediaDevices | null = null
+    private _permissionBackup: Permissions | null = null
+
     get mediaDevices(): MediaDevices {
       return mediaDevicesFake
     }
 
     get permissions(): Permissions {
       return permissionsFake
+    }
+
+    installInto(target: Window) {
+      this._target = target
+      this._mediaDevicesBackup = target.navigator.mediaDevices
+      this._permissionBackup = target.navigator.permissions
+      Object.assign(this._target.navigator, { mediaDevices: mediaDevicesFake, permissions: permissionsFake })
+    }
+
+    uninstall() {
+      if (this._target === null) {
+        // nothing to restore
+        return
+      }
+      Object.assign(this._target.navigator, {
+        mediaDevices: this._mediaDevicesBackup,
+        permissions: this._permissionBackup,
+      })
+      this._target = null
+      this._mediaDevicesBackup = null
+      this._permissionBackup = null
     }
 
     attach(toAdd: MediaDeviceDescription): void {
