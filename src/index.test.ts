@@ -1,6 +1,7 @@
 import {
   allAccessAllowed,
   allAccessBlocked,
+  anyDevice,
   anyCamera,
   anyMicrophone,
   forgeMediaDevices,
@@ -92,6 +93,18 @@ describe('MediaDevicesFake', () => {
         'Permission denied',
         'NotAllowedError',
       )
+    })
+  })
+  describe('attach', () => {
+    beforeEach(() => {
+      control = forgeMediaDevices(allAccessBlocked())
+      control.installInto(window)
+    })
+
+    test('an array of devices', async () => {
+      control.attach([anyDevice()])
+      const devices = await window.navigator.mediaDevices.enumerateDevices()
+      expect(devices).toHaveLength(1)
     })
   })
 })

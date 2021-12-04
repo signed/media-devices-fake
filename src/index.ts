@@ -111,8 +111,15 @@ export const forgeMediaDevices = (initial: InitialSetup = {}): MediaDevicesContr
       this._permissionBackup = null
     }
 
-    attach(...toAdd: MediaDeviceDescription[]): void {
-      toAdd.forEach((it) => mediaDevicesFake.attach(it))
+    attach(...toAdd: MediaDeviceDescription[] | [MediaDeviceDescription[]]): void {
+      let array: MediaDeviceDescription[] = toAdd as MediaDeviceDescription[]
+      if (toAdd.length === 1) {
+        const singleElement = toAdd[0]
+        if (Array.isArray(singleElement)) {
+          array = singleElement
+        }
+      }
+      array.forEach((it) => mediaDevicesFake.attach(it))
     }
 
     remove(toRemove: MediaDeviceDescription | 'all'): void {
