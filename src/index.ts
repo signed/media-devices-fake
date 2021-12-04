@@ -58,7 +58,7 @@ export interface MediaDevicesControl {
 
   uninstall(): void
 
-  attach(toAdd: MediaDeviceDescription): void
+  attach(...toAdd: MediaDeviceDescription[] | [MediaDeviceDescription[]]): void
 
   remove(toRemove: MediaDeviceDescription | 'all'): void
 
@@ -111,8 +111,8 @@ export const forgeMediaDevices = (initial: InitialSetup = {}): MediaDevicesContr
       this._permissionBackup = null
     }
 
-    attach(toAdd: MediaDeviceDescription): void {
-      mediaDevicesFake.attach(toAdd)
+    attach(...toAdd: MediaDeviceDescription[]): void {
+      toAdd.forEach((it) => mediaDevicesFake.attach(it))
     }
 
     remove(toRemove: MediaDeviceDescription | 'all'): void {
