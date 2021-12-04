@@ -194,7 +194,8 @@ export class MediaDevicesFake extends EventTarget implements MediaDevices {
   }
 
   public noDevicesAttached() {
-    this._deviceDescriptions.forEach((descriptor) => this.remove(descriptor))
+    const currentlyAttachedDevices = [...this._deviceDescriptions]
+    currentlyAttachedDevices.forEach((descriptor) => this.remove(descriptor))
   }
 
   public attach(toAdd: MediaDeviceDescription) {

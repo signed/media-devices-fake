@@ -60,7 +60,7 @@ export interface MediaDevicesControl {
 
   attach(toAdd: MediaDeviceDescription): void
 
-  remove(toRemove: MediaDeviceDescription): void
+  remove(toRemove: MediaDeviceDescription | 'all'): void
 
   deviceAccessPrompt(): Promise<PermissionPrompt>
 
@@ -115,7 +115,11 @@ export const forgeMediaDevices = (initial: InitialSetup = {}): MediaDevicesContr
       mediaDevicesFake.attach(toAdd)
     }
 
-    remove(toRemove: MediaDeviceDescription): void {
+    remove(toRemove: MediaDeviceDescription | 'all'): void {
+      if ('all' === toRemove) {
+        mediaDevicesFake.noDevicesAttached()
+        return
+      }
       mediaDevicesFake.remove(toRemove)
     }
 
