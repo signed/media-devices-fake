@@ -117,9 +117,6 @@ export const forgeMediaDevices = (initial: InitialSetup = {}): MediaDevicesContr
 
     remove(toRemove: MediaDeviceDescription): void {
       mediaDevicesFake.remove(toRemove)
-      openMediaTracks.allFor(toRemove).forEach((fake) => {
-        fake.deviceRemoved()
-      })
     }
 
     deviceAccessPrompt(): Promise<PermissionPrompt> {

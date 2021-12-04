@@ -213,6 +213,7 @@ ${JSON.stringify(toAdd, null, 2)}`)
       this._deviceDescriptions.splice(index, 1)
       this.informDeviceChangeListener()
     }
+    this.openMediaTracks.allFor(toRemove).forEach((mediaStreamFake) => mediaStreamFake.deviceRemoved())
   }
 
   private informDeviceChangeListener() {
