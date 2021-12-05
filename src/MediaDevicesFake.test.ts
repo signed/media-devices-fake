@@ -14,44 +14,6 @@ import {
 } from './Scenarios'
 import { UserConsentTracker } from './UserConsentTracker'
 
-const allPermissionsGranted = () => {
-  return new UserConsentTracker({
-    camera: 'granted',
-    microphone: 'granted',
-  })
-}
-
-const stillHaveToAskForDeviceAccess = () => {
-  return new UserConsentTracker({
-    camera: 'prompt',
-    microphone: 'prompt',
-  })
-}
-
-const runAndReport = async (fake: MediaDevicesFake, scenario: Scenario) => {
-  const stream = fake.getUserMedia(scenario.constraints)
-  const checks = scenario.expected.granted?.checks ?? []
-  const results = await Promise.all(
-    checks.map(async (check) => {
-      return {
-        what: check.what,
-        details: await check.predicate(stream),
-      }
-    }),
-  )
-
-  return results
-    .filter((check) => !check.details.success)
-    .map((failed) => {
-      const lines = []
-      lines.push('check: ' + failed.what)
-      const messages = failed.details.messages ?? ['no message']
-      messages.map((message) => ` - ${message}`).forEach((line) => lines.push(line))
-      return lines.join('\n')
-    })
-    .join('\n')
-}
-
 describe('attach device', () => {
   let fake: MediaDevicesFake
   beforeEach(() => {
@@ -259,3 +221,41 @@ describe('enumerateDevices', () => {
     })
   })
 })
+
+const allPermissionsGranted = () => {
+  return new UserConsentTracker({
+    camera: 'granted',
+    microphone: 'granted',
+  })
+}
+
+const stillHaveToAskForDeviceAccess = () => {
+  return new UserConsentTracker({
+    camera: 'prompt',
+    microphone: 'prompt',
+  })
+}
+
+const runAndReport = async (fake: MediaDevicesFake, scenario: Scenario) => {
+  const stream = fake.getUserMedia(scenario.constraints)
+  const checks = scenario.expected.granted?.checks ?? []
+  const results = await Promise.all(
+    checks.map(async (check) => {
+      return {
+        what: check.what,
+        details: await check.predicate(stream),
+      }
+    }),
+  )
+
+  return results
+    .filter((check) => !check.details.success)
+    .map((failed) => {
+      const lines = []
+      lines.push('check: ' + failed.what)
+      const messages = failed.details.messages ?? ['no message']
+      messages.map((message) => ` - ${message}`).forEach((line) => lines.push(line))
+      return lines.join('\n')
+    })
+    .join('\n')
+}
