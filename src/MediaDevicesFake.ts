@@ -154,7 +154,12 @@ export class MediaDevicesFake extends EventTarget implements MediaDevices {
   }
 
   enumerateDevices(): Promise<MediaDeviceInfo[]> {
-    return Promise.resolve(this.devices)
+    try {
+      const devices = this.devices
+      return Promise.resolve(devices)
+    } catch (e) {
+      return Promise.reject(e)
+    }
   }
 
   getSupportedConstraints(): MediaTrackSupportedConstraints {
