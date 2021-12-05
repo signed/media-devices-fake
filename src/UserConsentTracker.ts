@@ -179,6 +179,9 @@ export class UserConsentTracker {
     if (kind === 'videoinput') {
       return this._userConsent.camera === 'granted'
     }
+    if (kind === 'audiooutput') {
+      return this._userConsent.microphone === 'granted'
+    }
     throw notImplemented(`not sure how to implement this for ${kind}`)
   }
 }

@@ -1,5 +1,5 @@
 import 'jest-extended'
-import { anyCamera, anyDevice, anyMicrophone } from './DeviceMother'
+import { anyCamera, anyDevice, anyMicrophone, anySpeaker } from './DeviceMother'
 import './matchers/dom-exception'
 import './matchers/to-be-uuid'
 import './matchers/to-include-video-track'
@@ -12,7 +12,7 @@ import {
   requestedDeviceTypeNotAttached,
   Scenario,
 } from './Scenarios'
-import { UserConsentTracker } from './UserConsentTracker'
+import { UserConsent, UserConsentTracker } from './UserConsentTracker'
 
 describe('attach device', () => {
   let fake: MediaDevicesFake
@@ -210,6 +210,32 @@ describe('attach device', () => {
 })
 
 describe('enumerateDevices', () => {
+  test('include speakers on chrome', async () => {
+    const fake = new MediaDevicesFake(stillHaveToAskForDeviceAccess(), new OpenMediaTracks())
+    fake.attach(anySpeaker({ label: 'should not be returned' }))
+    const mediaDeviceInfos = await fake.enumerateDevices()
+    expect(mediaDeviceInfos).toHaveLength(1)
+    expect(mediaDeviceInfos[0].label).toBe('')
+  })
+
+  describe('speaker label is connected to microphone permissions', () => {
+    test('label is returned if microphone permissions are granted', async () => {
+      const fake = new MediaDevicesFake(anyUserConsent({ microphone: 'granted' }), new OpenMediaTracks())
+      fake.attach(anySpeaker({ label: 'the speaker' }))
+      const mediaDeviceInfos = await fake.enumerateDevices()
+      expect(mediaDeviceInfos).toHaveLength(1)
+      expect(mediaDeviceInfos[0].label).toBe('the speaker')
+    })
+
+    test('label is returned if microphone permissions are granted', async () => {
+      const fake = new MediaDevicesFake(anyUserConsent({ microphone: 'denied' }), new OpenMediaTracks())
+      fake.attach(anySpeaker({ label: 'should not be returned' }))
+      const mediaDeviceInfos = await fake.enumerateDevices()
+      expect(mediaDeviceInfos).toHaveLength(1)
+      expect(mediaDeviceInfos[0].label).toBe('')
+    })
+  })
+
   describe('still have to ask for device access', () => {
     test('label and deviceId in MediaDeviceInfo is set to empty string', async () => {
       const fake = new MediaDevicesFake(stillHaveToAskForDeviceAccess(), new OpenMediaTracks())
@@ -223,17 +249,23 @@ describe('enumerateDevices', () => {
 })
 
 const allPermissionsGranted = () => {
-  return new UserConsentTracker({
+  return anyUserConsent({
     camera: 'granted',
     microphone: 'granted',
   })
 }
 
 const stillHaveToAskForDeviceAccess = () => {
-  return new UserConsentTracker({
+  return anyUserConsent({
     camera: 'prompt',
     microphone: 'prompt',
   })
+}
+
+const anyUserConsent = (override: Partial<UserConsent> = {}) => {
+  const camera = override.camera ?? 'prompt'
+  const microphone = override.microphone ?? 'prompt'
+  return new UserConsentTracker({ camera, microphone })
 }
 
 const runAndReport = async (fake: MediaDevicesFake, scenario: Scenario) => {
