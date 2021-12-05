@@ -1,5 +1,5 @@
 export { MediaDeviceDescription } from './MediaDeviceDescription'
-export { anyMicrophone, anyCamera, anyDevice } from './DeviceMother'
+export { anyMicrophone, anyCamera, anyDevice, anySpeaker } from './DeviceMother'
 export { PermissionPrompt, PermissionPromptAction, RequestedMediaInput } from './UserConsentTracker'
 import { MediaDeviceDescription } from './MediaDeviceDescription'
 import { MediaDevicesFake } from './MediaDevicesFake'

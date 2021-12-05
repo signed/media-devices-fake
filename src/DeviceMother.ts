@@ -17,3 +17,7 @@ export const anyCamera = (override: Partial<Omit<MediaDeviceDescription, 'kind'>
 export const anyMicrophone = (override: Partial<Omit<MediaDeviceDescription, 'kind'>> = {}): MediaDeviceDescription => {
   return anyDevice({ ...override, kind: 'audioinput' })
 }
+
+export const anySpeaker = (override: Partial<Omit<MediaDeviceDescription, 'kind'>> = {}): MediaDeviceDescription => {
+  return anyDevice({ ...override, kind: 'audiooutput' })
+}
