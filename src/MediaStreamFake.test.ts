@@ -1,4 +1,3 @@
-import 'jest-extended'
 import { defaultContext } from './context'
 import { MediaStreamFake, mediaStreamId } from './MediaStreamFake'
 import { anyMediaStreamTrack } from './MediaStreamTrackMother'

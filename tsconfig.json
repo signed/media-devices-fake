@@ -9,6 +9,9 @@
     "outDir": "./lib/esm/",
     "declaration": true
   },
+  "files": [
+    "src/global.d.ts"
+  ],
   "include": ["./src/**/*"],
   "exclude": ["**/*.test.ts"]
 }
