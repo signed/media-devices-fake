@@ -7,6 +7,7 @@ import { MediaDevicesFake } from './MediaDevicesFake'
 import { NotImplemented, ThrowingNotImplemented } from './not-implemented'
 import { OpenMediaTracks } from './OpenMediaTracks'
 import { PermissionsFake } from './permissions/PermissionsFake'
+import { DefaultReporter, NoopReporter, Reporter } from './reporter'
 import {
   allConstraintsFalse,
   existingDevice,
@@ -17,10 +18,13 @@ import {
 } from './Scenarios'
 import { PermissionPrompt, UserConsentTracker } from './UserConsentTracker'
 
+export type LogLevel = 'off' | 'all'
+
 export type InitialSetup = {
   attachedDevices?: MediaDeviceDescription[]
   microphone?: PermissionState
   camera?: PermissionState
+  logLevel?: LogLevel
 }
 
 type InitialSetupWithoutPermissions = Omit<InitialSetup, 'microphone' | 'camera'>
@@ -72,9 +76,12 @@ export interface MediaDevicesControl {
 export const forgeMediaDevices = (initial: InitialSetup = {}): MediaDevicesControl => {
   const camera = initial.camera ?? 'prompt'
   const microphone = initial.microphone ?? 'prompt'
-  const notImplemented: NotImplemented = new ThrowingNotImplemented()
+  const logLevel = initial.logLevel ?? 'off'
+  const reporter: Reporter = logLevel === 'off' ? new NoopReporter() : new DefaultReporter()
+  const notImplemented: NotImplemented = new ThrowingNotImplemented(reporter)
   const context: Context = {
     notImplemented,
+    reporter,
   }
   const consentTracker = new UserConsentTracker(context, { camera, microphone })
   const openMediaTracks = new OpenMediaTracks()

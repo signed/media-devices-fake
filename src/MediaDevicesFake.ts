@@ -176,6 +176,7 @@ export class MediaDevicesFake extends EventTarget implements MediaDevices {
   // https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
   // https://blog.addpipe.com/common-getusermedia-errors/
   getUserMedia(constraints?: MediaStreamConstraints): Promise<MediaStream> {
+    this._context.reporter.report(() => ['getUserMedia', 'constraints' + ':' + JSON.stringify(constraints, null, 2)])
     if (
       constraints === undefined ||
       Object.keys(constraints).length === 0 ||

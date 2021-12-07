@@ -1,9 +1,12 @@
 import { NotImplemented, ThrowingNotImplemented } from './not-implemented'
+import { DefaultReporter, Reporter } from './reporter'
 
 export const defaultContext = (): Context => {
-  return { notImplemented: new ThrowingNotImplemented() }
+  const repoter = new DefaultReporter()
+  return { notImplemented: new ThrowingNotImplemented(repoter), reporter: repoter }
 }
 
 export interface Context {
   readonly notImplemented: NotImplemented
+  readonly reporter: Reporter
 }
