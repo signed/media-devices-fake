@@ -1,4 +1,5 @@
 import 'jest-extended'
+import { defaultContext } from './context'
 import { anyCamera, anyDevice, anyMicrophone, anySpeaker } from './DeviceMother'
 import './matchers/dom-exception'
 import './matchers/to-be-uuid'
@@ -17,7 +18,7 @@ import { UserConsent, UserConsentTracker } from './UserConsentTracker'
 describe('attach device', () => {
   let fake: MediaDevicesFake
   beforeEach(() => {
-    fake = new MediaDevicesFake(allPermissionsGranted(), new OpenMediaTracks())
+    fake = new MediaDevicesFake(defaultContext(), allPermissionsGranted(), new OpenMediaTracks())
   })
 
   describe('attach', () => {
@@ -211,7 +212,7 @@ describe('attach device', () => {
 
 describe('enumerateDevices', () => {
   test('include speakers on chrome', async () => {
-    const fake = new MediaDevicesFake(stillHaveToAskForDeviceAccess(), new OpenMediaTracks())
+    const fake = new MediaDevicesFake(defaultContext(), stillHaveToAskForDeviceAccess(), new OpenMediaTracks())
     fake.attach(anySpeaker({ label: 'should not be returned' }))
     const mediaDeviceInfos = await fake.enumerateDevices()
     expect(mediaDeviceInfos).toHaveLength(1)
@@ -220,7 +221,11 @@ describe('enumerateDevices', () => {
 
   describe('speaker label is connected to microphone permissions', () => {
     test('label is returned if microphone permissions are granted', async () => {
-      const fake = new MediaDevicesFake(anyUserConsent({ microphone: 'granted' }), new OpenMediaTracks())
+      const fake = new MediaDevicesFake(
+        defaultContext(),
+        anyUserConsent({ microphone: 'granted' }),
+        new OpenMediaTracks(),
+      )
       fake.attach(anySpeaker({ label: 'the speaker' }))
       const mediaDeviceInfos = await fake.enumerateDevices()
       expect(mediaDeviceInfos).toHaveLength(1)
@@ -228,7 +233,11 @@ describe('enumerateDevices', () => {
     })
 
     test('label is returned if microphone permissions are granted', async () => {
-      const fake = new MediaDevicesFake(anyUserConsent({ microphone: 'denied' }), new OpenMediaTracks())
+      const fake = new MediaDevicesFake(
+        defaultContext(),
+        anyUserConsent({ microphone: 'denied' }),
+        new OpenMediaTracks(),
+      )
       fake.attach(anySpeaker({ label: 'should not be returned' }))
       const mediaDeviceInfos = await fake.enumerateDevices()
       expect(mediaDeviceInfos).toHaveLength(1)
@@ -238,7 +247,7 @@ describe('enumerateDevices', () => {
 
   describe('still have to ask for device access', () => {
     test('label and deviceId in MediaDeviceInfo is set to empty string', async () => {
-      const fake = new MediaDevicesFake(stillHaveToAskForDeviceAccess(), new OpenMediaTracks())
+      const fake = new MediaDevicesFake(defaultContext(), stillHaveToAskForDeviceAccess(), new OpenMediaTracks())
       fake.attach(anyMicrophone({ label: 'The microphone', deviceId: 'microphone identifier' }))
       const devices = await fake.enumerateDevices()
       const microphone = devices[0]
@@ -265,7 +274,7 @@ const stillHaveToAskForDeviceAccess = () => {
 const anyUserConsent = (override: Partial<UserConsent> = {}) => {
   const camera = override.camera ?? 'prompt'
   const microphone = override.microphone ?? 'prompt'
-  return new UserConsentTracker({ camera, microphone })
+  return new UserConsentTracker(defaultContext(), { camera, microphone })
 }
 
 const runAndReport = async (fake: MediaDevicesFake, scenario: Scenario) => {

@@ -1,10 +1,10 @@
+import { Context } from './context'
 import { Deferred } from './Deferred'
 import { LocalListenerPropertySync } from './LocalListenerPropertySync'
 import { MediaDeviceDescription } from './MediaDeviceDescription'
 import { MediaDeviceInfoFake } from './MediaDeviceInfoFake'
 import { MediaStreamFake, mediaStreamId } from './MediaStreamFake'
 import { initialMediaStreamTrackProperties, MediaStreamTrackFake, TrackKind } from './MediaStreamTrackFake'
-import { notImplemented } from './not-implemented'
 import { OpenMediaTracks } from './OpenMediaTracks'
 import { UserConsentTracker } from './UserConsentTracker'
 
@@ -17,33 +17,34 @@ const fit2 = (actual: string, ideal: string): number => (actual === ideal ? 0 : 
 type Constraint = (device: MediaDeviceInfoFake) => number
 
 class ConstrainSet {
-  private readonly constraints: Constraint[] = []
+  private readonly _constraints: Constraint[] = []
 
-  constructor(requested: boolean | MediaTrackConstraints) {
+  constructor(private readonly _context: Context, requested: boolean | MediaTrackConstraints) {
     if (typeof requested === 'boolean') {
       return
     }
     const deviceId = requested.deviceId
     if (deviceId !== undefined) {
       if (typeof deviceId !== 'string') {
-        throw notImplemented('only basic deviceId of type string is supported at the moment')
+        this._context.notImplemented.call('only basic deviceId of type string is supported at the moment')
       }
-      this.constraints.push((device: MediaDeviceInfoFake) => {
+      this._constraints.push((device: MediaDeviceInfoFake) => {
         return fit2(device.deviceId, deviceId)
       })
     }
   }
 
   fitnessDistanceFor(device: MediaDeviceInfoFake): number {
-    return this.constraints.reduce((acc, curr) => acc + curr(device), 0)
+    return this._constraints.reduce((acc, curr) => acc + curr(device), 0)
   }
 }
 
 const selectSettings = (
+  context: Context,
   mediaTrackConstraints: MediaTrackConstraints | boolean,
   devices: MediaDeviceInfoFake[],
 ): MediaDeviceInfoFake | void => {
-  const constraintSet = new ConstrainSet(mediaTrackConstraints)
+  const constraintSet = new ConstrainSet(context, mediaTrackConstraints)
   const viableDevice = devices
     .map((device) => {
       return {
@@ -88,6 +89,7 @@ const trackConstraintsFrom = (
 }
 
 const tryToOpenAStreamFor = (
+  context: Context,
   deferred: Deferred<MediaStream>,
   deviceKind: MediaDeviceKind,
   trackKind: TrackKind,
@@ -100,17 +102,20 @@ const tryToOpenAStreamFor = (
     deferred.reject(new DOMException('Requested device not found', 'NotFoundError'))
     return
   }
-  const selectedDevice = selectSettings(mediaTrackConstraints, devices)
+  const selectedDevice = selectSettings(context, mediaTrackConstraints, devices)
   if (selectedDevice === undefined) {
-    throw notImplemented('should this be an over constrained error?')
+    context.notImplemented.call('should this be an over constrained error?')
   }
 
-  const mediaTrack = new MediaStreamTrackFake(initialMediaStreamTrackProperties(selectedDevice.label, trackKind))
+  const mediaTrack = new MediaStreamTrackFake(
+    context,
+    initialMediaStreamTrackProperties(selectedDevice.label, trackKind),
+  )
   openMediaTracks.track(selectedDevice, mediaTrack)
   mediaTrack.onTerminated = (track) => openMediaTracks.remove(track)
 
   const mediaTracks = [mediaTrack]
-  const mediaStream = new MediaStreamFake(mediaStreamId(), mediaTracks)
+  const mediaStream = new MediaStreamFake(context, mediaStreamId(), mediaTracks)
 
   deferred.resolve(mediaStream)
 }
@@ -122,8 +127,9 @@ export class MediaDevicesFake extends EventTarget implements MediaDevices {
   private readonly _onDeviceChangeListener: LocalListenerPropertySync<DeviceChangeListener>
 
   constructor(
+    private readonly _context: Context,
     private readonly _userConsentTracker: UserConsentTracker,
-    private readonly openMediaTracks: OpenMediaTracks,
+    private readonly _openMediaTracks: OpenMediaTracks,
   ) {
     super()
     this._onDeviceChangeListener = new LocalListenerPropertySync<DeviceChangeListener>(this, 'devicechange')
@@ -142,7 +148,7 @@ export class MediaDevicesFake extends EventTarget implements MediaDevices {
           label,
         }
       })
-      .map((description) => new MediaDeviceInfoFake(description))
+      .map((description) => new MediaDeviceInfoFake(this._context, description))
   }
 
   get ondevicechange(): DeviceChangeListener | null {
@@ -163,7 +169,7 @@ export class MediaDevicesFake extends EventTarget implements MediaDevices {
   }
 
   getSupportedConstraints(): MediaTrackSupportedConstraints {
-    throw notImplemented('MediaDevicesFake.getSupportedConstraints()')
+    this._context.notImplemented.call('MediaDevicesFake.getSupportedConstraints()')
   }
 
   // https://w3c.github.io/mediacapture-main/#methods-5
@@ -182,14 +188,22 @@ export class MediaDevicesFake extends EventTarget implements MediaDevices {
       )
     }
     if (constraints.audio !== undefined && constraints.video !== undefined) {
-      throw notImplemented('at the moment there is no support to request audio and video at the same time')
+      this._context.notImplemented.call('at the moment there is no support to request audio and video at the same time')
     }
     const { mediaTrackConstraints, trackKind, deviceKind } = trackConstraintsFrom(constraints)
     const deferred = new Deferred<MediaStream>()
     this._userConsentTracker.requestPermissionFor({
       deviceKind,
       granted: () => {
-        tryToOpenAStreamFor(deferred, deviceKind, trackKind, mediaTrackConstraints, this.devices, this.openMediaTracks)
+        tryToOpenAStreamFor(
+          this._context,
+          deferred,
+          deviceKind,
+          trackKind,
+          mediaTrackConstraints,
+          this.devices,
+          this._openMediaTracks,
+        )
       },
       blocked: () => {
         deferred.reject(new DOMException('Permission denied', 'NotAllowedError'))
@@ -205,7 +219,7 @@ export class MediaDevicesFake extends EventTarget implements MediaDevices {
 
   public attach(toAdd: MediaDeviceDescription) {
     if (this._deviceDescriptions.some(descriptionMatching(toAdd))) {
-      throw notImplemented(`device with this description already attached
+      this._context.notImplemented.call(`device with this description already attached
 ${JSON.stringify(toAdd, null, 2)}`)
     }
     // make a defensive copy to stop manipulation after attaching the device
@@ -219,7 +233,7 @@ ${JSON.stringify(toAdd, null, 2)}`)
       this._deviceDescriptions.splice(index, 1)
       this.informDeviceChangeListener()
     }
-    this.openMediaTracks.allFor(toRemove).forEach((mediaStreamFake) => mediaStreamFake.deviceRemoved())
+    this._openMediaTracks.allFor(toRemove).forEach((mediaStreamFake) => mediaStreamFake.deviceRemoved())
   }
 
   private informDeviceChangeListener() {

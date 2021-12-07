@@ -1,5 +1,5 @@
+import { Context } from './context'
 import { MediaStreamTrackFake } from './MediaStreamTrackFake'
-import { notImplemented } from './not-implemented'
 
 export type MediaStreamEventListener = (this: MediaStream, ev: MediaStreamTrackEvent) => any
 
@@ -13,7 +13,11 @@ export const mediaStreamId = () => {
 }
 
 export class MediaStreamFake extends EventTarget implements MediaStream {
-  constructor(private readonly _id: string, private readonly mediaTracks: Array<MediaStreamTrackFake>) {
+  constructor(
+    private readonly _context: Context,
+    private readonly _id: string,
+    private readonly mediaTracks: Array<MediaStreamTrackFake>,
+  ) {
     super()
   }
 
@@ -34,19 +38,21 @@ export class MediaStreamFake extends EventTarget implements MediaStream {
   }
 
   get onaddtrack(): MediaStreamEventListener | null {
-    throw notImplemented('get MediaStreamFake.onaddtrack')
+    this._context.notImplemented.call('get MediaStreamFake.onaddtrack')
+    throw 'unreachable'
   }
 
   set onaddtrack(_listener: MediaStreamEventListener | null) {
-    throw notImplemented('set MediaStreamFake.onaddtrack')
+    this._context.notImplemented.call('set MediaStreamFake.onaddtrack')
   }
 
   get onremovetrack(): MediaStreamEventListener | null {
-    throw notImplemented('get MediaStreamFake.onremovetrack')
+    this._context.notImplemented.call('get MediaStreamFake.onremovetrack')
+    throw 'unreachable'
   }
 
   set onremovetrack(_listener: MediaStreamEventListener | null) {
-    throw notImplemented('set MediaStreamFake.onremovetrack')
+    this._context.notImplemented.call('set MediaStreamFake.onremovetrack')
   }
 
   /**
@@ -55,7 +61,7 @@ export class MediaStreamFake extends EventTarget implements MediaStream {
    * @param track
    */
   addTrack(track: MediaStreamTrack): void {
-    throw notImplemented('MediaStreamFake.addTrack()')
+    this._context.notImplemented.call('MediaStreamFake.addTrack()')
   }
 
   /**
@@ -63,7 +69,7 @@ export class MediaStreamFake extends EventTarget implements MediaStream {
    * The clone will, however, have a unique value for {@link MediaStreamFake.id id}.
    */
   clone(): MediaStream {
-    throw notImplemented('MediaStreamFake.clone()')
+    this._context.notImplemented.call('MediaStreamFake.clone()')
   }
 
   /**

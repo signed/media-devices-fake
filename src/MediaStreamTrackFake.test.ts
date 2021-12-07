@@ -1,4 +1,5 @@
 import './matchers/to-be-uuid'
+import { defaultContext } from './context'
 import { allAccessAllowed, anyDevice, forgeMediaDevices } from './index'
 import { initialMediaStreamTrackProperties, MediaStreamTrackFake } from './MediaStreamTrackFake'
 import { anyTrackKind } from './MediaStreamTrackMother'
@@ -7,7 +8,7 @@ describe('MediaStreamTrackFake', () => {
   let track: MediaStreamTrackFake
 
   beforeEach(() => {
-    track = new MediaStreamTrackFake(initialMediaStreamTrackProperties('The Label', anyTrackKind()))
+    track = new MediaStreamTrackFake(defaultContext(), initialMediaStreamTrackProperties('The Label', anyTrackKind()))
   })
 
   test('enabled by default', () => {

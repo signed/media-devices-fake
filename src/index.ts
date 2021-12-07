@@ -1,8 +1,10 @@
 export { MediaDeviceDescription } from './MediaDeviceDescription'
 export { anyMicrophone, anyCamera, anyDevice, anySpeaker } from './DeviceMother'
 export { PermissionPrompt, PermissionPromptAction, RequestedMediaInput } from './UserConsentTracker'
+import { Context } from './context'
 import { MediaDeviceDescription } from './MediaDeviceDescription'
 import { MediaDevicesFake } from './MediaDevicesFake'
+import { NotImplemented, ThrowingNotImplemented } from './not-implemented'
 import { OpenMediaTracks } from './OpenMediaTracks'
 import { PermissionsFake } from './permissions/PermissionsFake'
 import {
@@ -70,10 +72,14 @@ export interface MediaDevicesControl {
 export const forgeMediaDevices = (initial: InitialSetup = {}): MediaDevicesControl => {
   const camera = initial.camera ?? 'prompt'
   const microphone = initial.microphone ?? 'prompt'
-  const consentTracker = new UserConsentTracker({ camera, microphone })
+  const notImplemented: NotImplemented = new ThrowingNotImplemented()
+  const context: Context = {
+    notImplemented,
+  }
+  const consentTracker = new UserConsentTracker(context, { camera, microphone })
   const openMediaTracks = new OpenMediaTracks()
-  const mediaDevicesFake = new MediaDevicesFake(consentTracker, openMediaTracks)
-  const permissionsFake = new PermissionsFake(consentTracker)
+  const mediaDevicesFake = new MediaDevicesFake(context, consentTracker, openMediaTracks)
+  const permissionsFake = new PermissionsFake(context, consentTracker)
   const attachedDevices = initial.attachedDevices ?? []
   attachedDevices.forEach((device) => mediaDevicesFake.attach(device))
 

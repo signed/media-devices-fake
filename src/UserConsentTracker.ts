@@ -1,5 +1,5 @@
+import { Context } from './context'
 import { Deferred } from './Deferred'
-import { notImplemented } from './not-implemented'
 import { PermissionStatusFake } from './permissions/PermissionStatusFake'
 
 export enum RequestedMediaInput {
@@ -26,14 +26,14 @@ export type UserConsent = {
   microphone: PermissionState
 }
 
-const resultingPermissionStateFor = (action: PermissionPromptAction): PermissionState => {
+const resultingPermissionStateFor = (context: Context, action: PermissionPromptAction): PermissionState => {
   if (action === 'allow') {
     return 'granted'
   }
   if (action === 'block') {
     return 'denied'
   }
-  throw notImplemented(`resultingPermissionStateFor() action: ${action}`)
+  context.notImplemented.call(`resultingPermissionStateFor() action: ${action}`)
 }
 
 export class UserConsentTracker {
@@ -43,7 +43,7 @@ export class UserConsentTracker {
   }
   private _pendingPermissionRequest: void | PermissionRequest = undefined
 
-  constructor(readonly _userConsent: UserConsent) {}
+  constructor(private readonly _context: Context, private readonly _userConsent: UserConsent) {}
 
   permissionStatusFor(kind: keyof UserConsent) {
     const permissionState = this.permissionStateFor(kind)
@@ -59,7 +59,7 @@ export class UserConsentTracker {
 
   requestPermissionFor(permissionRequest: PermissionRequest) {
     if (this._pendingPermissionRequest) {
-      throw notImplemented('There is already a pending permission request, not sure if this can happen')
+      this._context.notImplemented.call('There is already a pending permission request, not sure if this can happen')
     }
     if (this.permissionGrantedFor(permissionRequest.deviceKind)) {
       permissionRequest.granted()
@@ -83,7 +83,7 @@ export class UserConsentTracker {
     if (deviceKind === 'audioinput') {
       return this._userConsent.microphone === 'granted'
     }
-    throw notImplemented(`permissionGrantedFor '${deviceKind}'`)
+    this._context.notImplemented.call(`permissionGrantedFor '${deviceKind}'`)
   }
 
   private permissionBlockedFor(deviceKind: MediaDeviceKind) {
@@ -93,7 +93,7 @@ export class UserConsentTracker {
     if (deviceKind === 'audioinput') {
       return this._userConsent.microphone === 'denied'
     }
-    throw notImplemented(`permissionGrantedFor '${deviceKind}'`)
+    this._context.notImplemented.call(`permissionGrantedFor '${deviceKind}'`)
   }
 
   //todo add an override for the wait time and poll interval
@@ -109,7 +109,7 @@ export class UserConsentTracker {
           if (this._pendingPermissionRequest === undefined) {
             throw new Error('there is no pending permission request')
           }
-          const updatedPermission = resultingPermissionStateFor(action)
+          const updatedPermission = resultingPermissionStateFor(this._context, action)
           if (this._pendingPermissionRequest.deviceKind === 'audioinput') {
             this._userConsent.microphone = updatedPermission
             this._trackedPermissionStatus.microphone.forEach((fake) => fake.updateTo(updatedPermission))
@@ -120,7 +120,7 @@ export class UserConsentTracker {
           }
           this._pendingPermissionRequest = undefined
         }
-        const value = this.permissionPromptFor(this._pendingPermissionRequest, complete)
+        const value = this.permissionPromptFor(this._context, this._pendingPermissionRequest, complete)
         deferred.resolve(value)
         return
       }
@@ -142,6 +142,7 @@ export class UserConsentTracker {
   }
 
   private permissionPromptFor(
+    context: Context,
     permissionRequest: PermissionRequest,
     complete: (action: PermissionPromptAction) => void,
   ) {
@@ -167,7 +168,7 @@ export class UserConsentTracker {
           permissionRequest.blocked()
           return
         }
-        throw notImplemented(`takeAction '${action}'`)
+        context.notImplemented.call(`takeAction '${action}'`)
       }
     })()
   }
@@ -182,6 +183,6 @@ export class UserConsentTracker {
     if (kind === 'audiooutput') {
       return this._userConsent.microphone === 'granted'
     }
-    throw notImplemented(`not sure how to implement this for ${kind}`)
+    this._context.notImplemented.call(`not sure how to implement this for ${kind}`)
   }
 }

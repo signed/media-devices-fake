@@ -1,8 +1,8 @@
+import { Context } from './context'
 import { MediaDeviceDescription } from './MediaDeviceDescription'
-import { notImplemented } from './not-implemented'
 
 export class MediaDeviceInfoFake implements MediaDeviceInfo {
-  constructor(private readonly mediaDeviceDescription: MediaDeviceDescription) {}
+  constructor(private readonly _context: Context, private readonly mediaDeviceDescription: MediaDeviceDescription) {}
 
   get deviceId(): string {
     return this.mediaDeviceDescription.deviceId
@@ -21,6 +21,6 @@ export class MediaDeviceInfoFake implements MediaDeviceInfo {
   }
 
   toJSON(): any {
-    throw notImplemented('MediaDeviceInfo.toJSON()')
+    this._context.notImplemented.call('MediaDeviceInfo.toJSON()')
   }
 }
