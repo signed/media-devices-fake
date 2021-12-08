@@ -63,11 +63,18 @@ describe('attach device', () => {
         expect(deviceInfo.deviceId).toBe('the device id')
       })
     })
-    test('rejects adding two devices with the same groupId:deviceId', () => {
-      const one = anyDevice({ groupId: 'group id', deviceId: 'device id' })
-      const two = anyDevice({ groupId: 'group id', deviceId: 'device id' })
+    test('rejects adding two devices of the same kind with the same groupId:deviceId', () => {
+      const one = anyDevice({ groupId: 'group id', deviceId: 'device id', kind: 'audioinput' })
+      const two = anyDevice({ groupId: 'group id', deviceId: 'device id', kind: 'audioinput' })
       fake.attach(one)
       expect(() => fake.attach(two)).toThrow()
+    })
+    test('can attach devices with same groupId:deviceId if they are of a different kind', async () => {
+      const one = anyDevice({ groupId: 'group id', deviceId: 'default', kind: 'audioinput' })
+      const two = anyDevice({ groupId: 'group id', deviceId: 'default', kind: 'videoinput' })
+      fake.attach(one)
+      fake.attach(two)
+      expect(await fake.enumerateDevices()).toHaveLength(2)
     })
   })
 

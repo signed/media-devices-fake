@@ -10,7 +10,7 @@ import { UserConsentTracker } from './UserConsentTracker'
 
 type DeviceChangeListener = (this: MediaDevices, ev: Event) => any
 const descriptionMatching = (description: MediaDeviceDescription) => (device: MediaDeviceDescription) =>
-  device.deviceId === description.deviceId && device.groupId === description.groupId
+  device.deviceId === description.deviceId && device.groupId === description.groupId && device.kind === description.kind
 
 const fit2 = (actual: string, ideal: string): number => (actual === ideal ? 0 : 1)
 
