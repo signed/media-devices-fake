@@ -16,14 +16,14 @@ import {
   requestedDeviceTypeNotAttached,
   scenarios as all,
 } from './Scenarios'
-import { PermissionPrompt, UserConsentTracker } from './UserConsentTracker'
+import { PermissionPrompt, UserConsent, UserConsentTracker } from './UserConsentTracker'
 
 export type LogLevel = 'off' | 'all'
 
-export type InitialSetup = {
+export type PermissionSetup = Partial<UserConsent>
+
+export type InitialSetup = PermissionSetup & {
   attachedDevices?: MediaDeviceDescription[]
-  microphone?: PermissionState
-  camera?: PermissionState
   logLevel?: LogLevel
 }
 
@@ -70,7 +70,9 @@ export interface MediaDevicesControl {
 
   deviceAccessPrompt(): Promise<PermissionPrompt>
 
-  setPermissionFor(type: 'camera' | 'microphone', state: PermissionState): void
+  setPermissionFor(
+    ...permissionSetup: [type: 'camera' | 'microphone', state: PermissionState] | [PermissionSetup]
+  ): void
 }
 
 export const forgeMediaDevices = (initial: InitialSetup = {}): MediaDevicesControl => {
@@ -89,6 +91,16 @@ export const forgeMediaDevices = (initial: InitialSetup = {}): MediaDevicesContr
   const permissionsFake = new PermissionsFake(context, consentTracker)
   const attachedDevices = initial.attachedDevices ?? []
   attachedDevices.forEach((device) => mediaDevicesFake.attach(device))
+
+  const _setPermissionFor = (type: 'camera' | 'microphone', state: PermissionState): void => {
+    consentTracker.setPermissionFor(type, state)
+    if (state === 'granted') {
+      return
+    }
+    openMediaTracks.allFor(type).forEach((fake) => {
+      fake.permissionRevoked()
+    })
+  }
 
   return new (class implements MediaDevicesControl {
     private _target: Window | null = null
@@ -147,14 +159,20 @@ export const forgeMediaDevices = (initial: InitialSetup = {}): MediaDevicesContr
       return consentTracker.deviceAccessPrompt()
     }
 
-    setPermissionFor(type: 'camera' | 'microphone', state: PermissionState): void {
-      consentTracker.setPermissionFor(type, state)
-      if (state === 'granted') {
+    setPermissionFor(
+      ...permissionSetup: [type: 'camera' | 'microphone', state: PermissionState] | [PermissionSetup]
+    ): void {
+      if (permissionSetup.length === 2) {
+        _setPermissionFor(...permissionSetup)
         return
       }
-      openMediaTracks.allFor(type).forEach((fake) => {
-        fake.permissionRevoked()
-      })
+      const [{ camera, microphone }] = permissionSetup
+      if (camera) {
+        _setPermissionFor('camera', camera)
+      }
+      if (microphone) {
+        _setPermissionFor('microphone', microphone)
+      }
     }
   })()
 }

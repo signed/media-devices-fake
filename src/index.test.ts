@@ -1,8 +1,8 @@
 import {
   allAccessAllowed,
   allAccessBlocked,
-  anyDevice,
   anyCamera,
+  anyDevice,
   anyMicrophone,
   forgeMediaDevices,
   MediaDevicesControl,
@@ -146,5 +146,23 @@ describe('PermissionsFake', () => {
       expect(onchange).toHaveBeenCalled()
       expect(permissionStatus.state).toEqual('denied')
     })
+    test('change permission after creation in one call', async () => {
+      control.setPermissionFor({ camera: 'granted', microphone: 'granted' })
+      expect(await permissionStateFor('camera')).toBe('granted')
+      expect(await permissionStateFor('microphone')).toBe('granted')
+
+      control.setPermissionFor({ camera: 'denied' })
+      expect(await permissionStateFor('camera')).toBe('denied')
+      expect(await permissionStateFor('microphone')).toBe('granted')
+
+      control.setPermissionFor({ microphone: 'denied' })
+      expect(await permissionStateFor('camera')).toBe('denied')
+      expect(await permissionStateFor('microphone')).toBe('denied')
+    })
   })
 })
+
+const permissionStateFor = async (name: 'camera' | 'microphone') => {
+  const cameraPermission = await window.navigator.permissions.query({ name })
+  return cameraPermission.state
+}
