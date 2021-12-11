@@ -9,7 +9,8 @@
     "unit",
     "testing",
     "fake",
-    "mock"
+    "mock",
+    "jsdom"
   ],
   "version": "0.11.0",
   "repository": {
