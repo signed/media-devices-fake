@@ -1,6 +1,6 @@
 import {
-  allAccessAllowed,
-  allAccessBlocked,
+  allAccessGranted,
+  allAccessDenied,
   anyCamera,
   anyDevice,
   anyMicrophone,
@@ -63,7 +63,7 @@ describe('MediaDevicesFake', () => {
   })
   describe('device access granted', () => {
     beforeEach(() => {
-      control = forgeMediaDevices(allAccessAllowed())
+      control = forgeMediaDevices(allAccessGranted())
       control.installInto(window)
     })
 
@@ -84,7 +84,7 @@ describe('MediaDevicesFake', () => {
   })
   describe('device access blocked', () => {
     beforeEach(() => {
-      control = forgeMediaDevices(allAccessBlocked())
+      control = forgeMediaDevices(allAccessDenied())
       control.installInto(window)
     })
 
@@ -97,7 +97,7 @@ describe('MediaDevicesFake', () => {
   })
   describe('attach', () => {
     beforeEach(() => {
-      control = forgeMediaDevices(allAccessBlocked())
+      control = forgeMediaDevices(allAccessDenied())
       control.installInto(window)
     })
 

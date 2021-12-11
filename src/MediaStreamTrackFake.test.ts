@@ -1,6 +1,6 @@
 import './matchers/to-be-uuid'
 import { defaultContext } from './context'
-import { allAccessAllowed, anyDevice, forgeMediaDevices } from './index'
+import { allAccessGranted, anyDevice, forgeMediaDevices } from './index'
 import { initialMediaStreamTrackProperties, MediaStreamTrackFake } from './MediaStreamTrackFake'
 import { anyTrackKind } from './MediaStreamTrackMother'
 
@@ -49,7 +49,7 @@ describe('MediaStreamTrackFake', () => {
   describe('is called', () => {
     test('when the device is removed', async () => {
       const device = anyDevice({ kind: 'audioinput' })
-      const control = forgeMediaDevices(allAccessAllowed({ attachedDevices: [device] }))
+      const control = forgeMediaDevices({ attachedDevices: [device], ...allAccessGranted() })
 
       const mediaStream = await control.mediaDevices.getUserMedia({ audio: true })
       const audioTracks = mediaStream.getAudioTracks()
@@ -74,7 +74,7 @@ describe('MediaStreamTrackFake', () => {
     })
     test('when the device permission is revoked', async () => {
       const device = anyDevice({ kind: 'audioinput' })
-      const control = forgeMediaDevices(allAccessAllowed({ attachedDevices: [device] }))
+      const control = forgeMediaDevices({ attachedDevices: [device], ...allAccessGranted() })
 
       const mediaStream = await control.mediaDevices.getUserMedia({ audio: true })
       const audioTracks = mediaStream.getAudioTracks()

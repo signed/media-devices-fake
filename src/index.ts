@@ -27,31 +27,26 @@ export type InitialSetup = PermissionSetup & {
   logLevel?: LogLevel
 }
 
-type InitialSetupWithoutPermissions = Omit<InitialSetup, 'microphone' | 'camera'>
-
-export const stillHaveToAskForDeviceAccess = (additional: InitialSetupWithoutPermissions = {}): InitialSetup => {
+export const stillHaveToAskForDeviceAccess = (additional: PermissionSetup = {}): PermissionSetup => {
   return {
     microphone: 'prompt',
     camera: 'prompt',
-    attachedDevices: [],
     ...additional,
   }
 }
 
-export const allAccessAllowed = (additional: InitialSetupWithoutPermissions = {}): InitialSetup => {
+export const allAccessGranted = (additional: PermissionSetup = {}): PermissionSetup => {
   return {
     microphone: 'granted',
     camera: 'granted',
-    attachedDevices: [],
     ...additional,
   }
 }
 
-export const allAccessBlocked = (additional: InitialSetupWithoutPermissions = {}): InitialSetup => {
+export const allAccessDenied = (additional: PermissionSetup = {}): PermissionSetup => {
   return {
     microphone: 'denied',
     camera: 'denied',
-    attachedDevices: [],
     ...additional,
   }
 }
