@@ -189,6 +189,7 @@ describe('attach device', () => {
       expect(track.readyState).toBe('live')
       expect(track.kind).toBe('video')
     })
+
     test('return audioinput with matching device id', async () => {
       fake.attach(anyMicrophone({ deviceId: 'not this one' }))
       fake.attach(anyMicrophone({ deviceId: 'attached', label: 'match' }))
@@ -202,6 +203,27 @@ describe('attach device', () => {
       expect(track.enabled).toBe(true)
       expect(track.readyState).toBe('live')
       expect(track.kind).toBe('audio')
+    })
+
+    test('provide access to the passed video constraints', async () => {
+      fake.attach(anyCamera())
+      const constraintInput = { facingMode: 'user' }
+      const stream = await fake.getUserMedia({ video: constraintInput })
+      const trackConstraints = stream.getTracks()[0].getConstraints()
+      expect(trackConstraints).toEqual({ facingMode: 'user' })
+      expect(trackConstraints).not.toBe(constraintInput)
+    })
+
+    test('replace true constraint with an empty object', async () => {
+      fake.attach(anyCamera())
+      const stream = await fake.getUserMedia({ video: true })
+      expect(stream.getTracks()[0].getConstraints()).toEqual({})
+    })
+
+    test('provide access to the passed audio constraints', async () => {
+      fake.attach(anyMicrophone())
+      const stream = await fake.getUserMedia({ audio: { noiseSuppression: true } })
+      expect(stream.getTracks()[0].getConstraints()).toEqual({ noiseSuppression: true })
     })
   })
 

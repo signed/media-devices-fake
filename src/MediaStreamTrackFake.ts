@@ -11,10 +11,15 @@ export interface MediaStreamTrackProperties {
   enabled: MediaStreamTrack['enabled']
   kind: TrackKind
   label: string
+  constraints: MediaTrackConstraints
 }
 
-export const initialMediaStreamTrackProperties = (label: string, kind: TrackKind): MediaStreamTrackProperties => {
-  return { id: uuidV4(), readyState: 'live', enabled: true, kind, label }
+export const initialMediaStreamTrackProperties = (
+  label: string,
+  kind: TrackKind,
+  constraints: MediaTrackConstraints,
+): MediaStreamTrackProperties => {
+  return { id: uuidV4(), readyState: 'live', enabled: true, kind, label, constraints }
 }
 
 export type TrackTerminatedListener = (mediaStreamTrack: MediaStreamTrackFake) => void
@@ -175,7 +180,7 @@ export class MediaStreamTrackFake extends EventTarget implements MediaStreamTrac
    * Constraints can also specify ideal and/or acceptable sizes or ranges of sizes.
    */
   getConstraints(): MediaTrackConstraints {
-    this._context.notImplemented.call('MediaStreamTrackFake.getConstraints()')
+    return this._properties.constraints
   }
 
   /**

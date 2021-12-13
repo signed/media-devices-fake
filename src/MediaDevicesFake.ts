@@ -88,6 +88,8 @@ const trackConstraintsFrom = (
   throw new Error('with the current assumptions this should not happen')
 }
 
+const deepClone = (mediaTrackConstraints: MediaTrackConstraints) => JSON.parse(JSON.stringify(mediaTrackConstraints))
+
 const tryToOpenAStreamFor = (
   context: Context,
   deferred: Deferred<MediaStream>,
@@ -107,9 +109,10 @@ const tryToOpenAStreamFor = (
     context.notImplemented.call('should this be an over constrained error?')
   }
 
+  const constraintObject = typeof mediaTrackConstraints === 'boolean' ? {} : deepClone(mediaTrackConstraints)
   const mediaTrack = new MediaStreamTrackFake(
     context,
-    initialMediaStreamTrackProperties(selectedDevice.label, trackKind),
+    initialMediaStreamTrackProperties(selectedDevice.label, trackKind, constraintObject),
   )
   openMediaTracks.track(selectedDevice, mediaTrack)
   mediaTrack.onTerminated = (track) => openMediaTracks.remove(track)

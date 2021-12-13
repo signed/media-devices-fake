@@ -8,7 +8,10 @@ describe('MediaStreamTrackFake', () => {
   let track: MediaStreamTrackFake
 
   beforeEach(() => {
-    track = new MediaStreamTrackFake(defaultContext(), initialMediaStreamTrackProperties('The Label', anyTrackKind()))
+    track = new MediaStreamTrackFake(
+      defaultContext(),
+      initialMediaStreamTrackProperties('The Label', anyTrackKind(), {}),
+    )
   })
 
   test('enabled by default', () => {
