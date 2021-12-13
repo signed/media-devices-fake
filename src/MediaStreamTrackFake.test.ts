@@ -15,6 +15,10 @@ describe('MediaStreamTrackFake', () => {
     expect(track.enabled).toBe(true)
   })
 
+  test('unmute by default', () => {
+    expect(track.muted).toBe(false)
+  })
+
   test('id is a uuid', () => {
     expect(track.id).toBeUuid()
   })

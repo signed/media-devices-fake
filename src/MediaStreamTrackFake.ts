@@ -97,10 +97,11 @@ export class MediaStreamTrackFake extends EventTarget implements MediaStreamTrac
 
   /**
    * Returns a Boolean value indicating whether the track is unable to provide media data due to a technical issue.
+   * https://w3c.github.io/mediacapture-main/#track-muted
    */
   get muted(): boolean {
-    this._context.notImplemented.call('get MediaStreamTrackFake.muted')
-    throw 'unreachable'
+    //
+    return false
   }
 
   /**
