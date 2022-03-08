@@ -175,6 +175,32 @@ describe('attach device', () => {
       })
     })
 
+    describe('exact deviceId constraint', () => {
+      test('return the connected device', async () => {
+        fake.attach(anyCamera({ deviceId: 'exact device identifier' }))
+        const stream = await fake.getUserMedia({
+          video: {
+            deviceId: {
+              exact: 'exact device identifier',
+            },
+          },
+        })
+        expect(stream).toIncludeVideoTrack()
+      })
+
+      test('reject if there is no device with a matching deviceId even if there are other video devices', async () => {
+        fake.attach(anyCamera({ deviceId: 'not what you are looking for' }))
+        const response = fake.getUserMedia({
+          video: {
+            deviceId: {
+              exact: 'exact device identifier',
+            },
+          },
+        })
+        await expect(response).rejects.toThrow()
+      })
+    })
+
     test('return videoinput with matching device id', async () => {
       fake.attach(anyCamera({ deviceId: 'not this one' }))
       fake.attach(anyCamera({ deviceId: 'attached', label: 'match' }))

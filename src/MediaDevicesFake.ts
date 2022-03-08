@@ -13,6 +13,7 @@ const descriptionMatching = (description: MediaDeviceDescription) => (device: Me
   device.deviceId === description.deviceId && device.groupId === description.groupId && device.kind === description.kind
 
 const fit2 = (actual: string, ideal: string): number => (actual === ideal ? 0 : 1)
+const fitExact = (actual: string, ideal: string): number => (actual === ideal ? 0 : Infinity)
 
 type Constraint = (device: MediaDeviceInfoFake) => number
 
@@ -24,18 +25,46 @@ class ConstrainSet {
       return
     }
     const deviceId = requested.deviceId
-    if (deviceId !== undefined) {
-      if (typeof deviceId !== 'string') {
-        this._context.notImplemented.call('only basic deviceId of type string is supported at the moment')
-      }
+    if (deviceId === undefined) {
+      return
+    }
+
+    if (typeof deviceId === 'string') {
       this._constraints.push((device: MediaDeviceInfoFake) => {
         return fit2(device.deviceId, deviceId)
       })
+      return
+    }
+
+    if (typeof deviceId === 'object') {
+      if (Array.isArray(deviceId)) {
+        this._context.notImplemented.call('An array of deviceIds is not supported right now')
+      } else {
+        const exactDeviceId = deviceId.exact
+        if (exactDeviceId === undefined) {
+          return
+        }
+        if (Array.isArray(exactDeviceId)) {
+          this._context.notImplemented.call('An array of exact deviceIds is not supported right now')
+        } else {
+          this._constraints.push((device: MediaDeviceInfoFake) => {
+            return fitExact(device.deviceId, exactDeviceId)
+          })
+        }
+      }
     }
   }
 
   fitnessDistanceFor(device: MediaDeviceInfoFake): number {
     return this._constraints.reduce((acc, curr) => acc + curr(device), 0)
+  }
+}
+
+class OverconstrainedError extends DOMException {
+  readonly constraint: string
+  constructor(constraint: string, message?: string) {
+    super(message, 'OverconstrainedError')
+    this.constraint = constraint
   }
 }
 
@@ -45,7 +74,7 @@ const selectSettings = (
   devices: MediaDeviceInfoFake[],
 ): MediaDeviceInfoFake | void => {
   const constraintSet = new ConstrainSet(context, mediaTrackConstraints)
-  const viableDevice = devices
+  const viableDevices = devices
     .map((device) => {
       return {
         device,
@@ -53,8 +82,11 @@ const selectSettings = (
       }
     })
     .filter((scoredDevice) => scoredDevice.fitness !== Infinity)
-  viableDevice.sort((a, b) => a.fitness - b.fitness)
-  return viableDevice[0].device
+  viableDevices.sort((a, b) => a.fitness - b.fitness)
+  if (viableDevices.length === 0) {
+    return undefined
+  }
+  return viableDevices[0].device
 }
 
 const trackConstraintsFrom = (
@@ -106,7 +138,10 @@ const tryToOpenAStreamFor = (
   }
   const selectedDevice = selectSettings(context, mediaTrackConstraints, devices)
   if (selectedDevice === undefined) {
-    context.notImplemented.call('should this be an over constrained error?')
+    //constraint name is hardcoded here, because right now we only check for deviceId
+    // Firefox also has a message and a stack
+    deferred.reject(new OverconstrainedError('deviceId', ''))
+    return
   }
 
   const constraintObject = typeof mediaTrackConstraints === 'boolean' ? {} : deepClone(mediaTrackConstraints)
