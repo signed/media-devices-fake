@@ -206,6 +206,10 @@ export class MediaDevicesFake extends EventTarget implements MediaDevices {
     }
   }
 
+  getDisplayMedia(constraints?: DisplayMediaStreamConstraints): Promise<MediaStream> {
+    this._context.notImplemented.call('MediaDevicesFake.getDisplayMedia() is not implemented')
+  }
+
   getSupportedConstraints(): MediaTrackSupportedConstraints {
     this._context.notImplemented.call('MediaDevicesFake.getSupportedConstraints()')
   }

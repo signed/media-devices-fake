@@ -11,7 +11,7 @@ const error: (input: ErrorPredicate) => MediaStreamPromisePredicate = (input: Er
     try {
       await promise
       return { success: false, messages: ['expected a rejected promise'] }
-    } catch (e) {
+    } catch (e: any) {
       return input(e)
     }
   }

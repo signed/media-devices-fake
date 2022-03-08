@@ -50,12 +50,14 @@
     "@babel/preset-typescript": "7.16.7",
     "@signed/prettier-config": "0.1.0",
     "@types/jest": "27.4.1",
+    "@types/web": "0.0.1",
+    "@typescript/lib-dom": "npm:@types/web",
     "concurrently": "7.0.0",
     "jest": "27.5.1",
     "jest-extended": "2.0.0",
     "prettier": "2.5.1",
     "rimraf": "3.0.2",
-    "typescript": "4.3.5"
+    "typescript": "4.6.2"
   },
   "jest": {
     "testEnvironment": "jsdom",

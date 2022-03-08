@@ -33,6 +33,7 @@ export class MediaStreamTrackFake extends EventTarget implements MediaStreamTrac
   private readonly _onmuteListener: LocalListenerPropertySync<MediaStreamTrackEventListener>
   private readonly _onunmuteListener: LocalListenerPropertySync<MediaStreamTrackEventListener>
   onTerminated: TrackTerminatedListener | null = null
+  contentHint = ''
 
   constructor(private readonly _context: Context, private readonly _properties: MediaStreamTrackProperties) {
     super()
