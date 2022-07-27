@@ -40,6 +40,21 @@ describe('MediaDevicesFake', () => {
       expect(await navigator.mediaDevices.getUserMedia({ video: true })).toIncludeVideoTrack()
     })
 
+    test('chain multiple permission prompts for different device types after each other', async () => {
+      control.attach(anyCamera(), anyMicrophone())
+      const navigator = window.navigator
+      const videoPromptPromise = control.deviceAccessPrompt()
+      const videoPromise = navigator.mediaDevices.getUserMedia({ video: true })
+      const audioPromise = navigator.mediaDevices.getUserMedia({ audio: true })
+      const videoPrompt = await videoPromptPromise
+      expect(videoPrompt.requestedPermissions()).toEqual([RequestedMediaInput.Camera])
+      videoPrompt.takeAction('allow')
+      expect(await videoPromise).toIncludeVideoTrack()
+      const audioPrompt = await control.deviceAccessPrompt()
+      expect(audioPrompt.requestedPermissions()).toEqual([RequestedMediaInput.Microphone])
+      await expect(audioPromise).rejects
+    })
+
     test('reject promise with a DomException after blocking access', async () => {
       const { attach, deviceAccessPrompt } = control
       attach(anyMicrophone())

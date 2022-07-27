@@ -36,12 +36,15 @@ const resultingPermissionStateFor = (context: Context, action: PermissionPromptA
   context.notImplemented.call(`resultingPermissionStateFor() action: ${action}`)
 }
 
+type Poll = () => void
+
 export class UserConsentTracker {
   private readonly _trackedPermissionStatus: Record<keyof UserConsent, PermissionStatusFake[]> = {
     camera: [],
     microphone: [],
   }
-  private _pendingPermissionRequest: void | PermissionRequest = undefined
+  private _pendingPermissionRequests: PermissionRequest[] = []
+  private _deviceAccessPromptPollQueue: Poll[] = []
 
   constructor(private readonly _context: Context, private readonly _userConsent: UserConsent) {}
 
@@ -58,9 +61,6 @@ export class UserConsentTracker {
   }
 
   requestPermissionFor(permissionRequest: PermissionRequest) {
-    if (this._pendingPermissionRequest) {
-      this._context.notImplemented.call('There is already a pending permission request, not sure if this can happen')
-    }
     if (this.permissionGrantedFor(permissionRequest.deviceKind)) {
       permissionRequest.granted()
       return
@@ -69,7 +69,7 @@ export class UserConsentTracker {
       permissionRequest.blocked()
       return
     }
-    this._pendingPermissionRequest = permissionRequest
+    this._pendingPermissionRequests.push(permissionRequest)
   }
 
   private permissionStateFor(kind: 'camera' | 'microphone') {
@@ -103,42 +103,63 @@ export class UserConsentTracker {
     const pollInterval = 100
     let timeWaited = 0
 
-    let pollForPendingPermissionRequest = () => {
-      if (this._pendingPermissionRequest) {
+    const pollForPendingPermissionRequest = () => {
+      if (this._pendingPermissionRequests.length > 0) {
         const complete = (action: PermissionPromptAction): void => {
-          if (this._pendingPermissionRequest === undefined) {
+          const pendingPermissionRequest = this._pendingPermissionRequests.shift()
+          if (pendingPermissionRequest === undefined) {
             throw new Error('there is no pending permission request')
           }
           const updatedPermission = resultingPermissionStateFor(this._context, action)
-          if (this._pendingPermissionRequest.deviceKind === 'audioinput') {
+          if (pendingPermissionRequest.deviceKind === 'audioinput') {
             this._userConsent.microphone = updatedPermission
             this._trackedPermissionStatus.microphone.forEach((fake) => fake.updateTo(updatedPermission))
           }
-          if (this._pendingPermissionRequest.deviceKind === 'videoinput') {
+          if (pendingPermissionRequest.deviceKind === 'videoinput') {
             this._userConsent.camera = updatedPermission
             this._trackedPermissionStatus.camera.forEach((fake) => fake.updateTo(updatedPermission))
           }
-          this._pendingPermissionRequest = undefined
         }
-        const value = this.permissionPromptFor(this._context, this._pendingPermissionRequest, complete)
+        const value = this.permissionPromptFor(this._context, this._pendingPermissionRequests[0], complete)
         deferred.resolve(value)
+        this.currentPollCompleted()
         return
       }
       if (timeWaited >= maximumWaitTime) {
         deferred.reject(
           new Error(`After waiting for ${maximumWaitTime} ms there still is no pending permission request`),
         )
+        this.currentPollCompleted()
         return
       }
       timeWaited += pollInterval
       // TODO add scheduler abstraction to encapsulate window access
       window.setTimeout(pollForPendingPermissionRequest, pollInterval)
     }
-    pollForPendingPermissionRequest()
+    this._deviceAccessPromptPollQueue.push(pollForPendingPermissionRequest)
+    if (this._deviceAccessPromptPollQueue.length === 1) {
+      pollForPendingPermissionRequest()
+    }
 
     // check with the Permission Manager if permissions where already rejected
     // check if there was a request for media
     return deferred.promise
+  }
+
+  private currentPollCompleted() {
+    this.removeCurrentPoll()
+    this.startNextPoll()
+  }
+
+  private startNextPoll() {
+    const nextPoll = this._deviceAccessPromptPollQueue[0]
+    if (nextPoll) {
+      nextPoll()
+    }
+  }
+
+  private removeCurrentPoll() {
+    this._deviceAccessPromptPollQueue.shift()
   }
 
   private permissionPromptFor(
