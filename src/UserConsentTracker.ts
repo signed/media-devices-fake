@@ -19,6 +19,7 @@ export interface PermissionRequest {
   deviceKind: MediaDeviceKind
   granted: () => void
   blocked: () => void
+  dismissed: () => void
 }
 
 export type UserConsent = {
@@ -110,6 +111,11 @@ export class UserConsentTracker {
           if (pendingPermissionRequest === undefined) {
             throw new Error('there is no pending permission request')
           }
+          if (action === 'dismiss') {
+            //todo 3rd dismiss means blocked
+            //not sure if this has to be handled here
+            return
+          }
           const updatedPermission = resultingPermissionStateFor(this._context, action)
           if (pendingPermissionRequest.deviceKind === 'audioinput') {
             this._userConsent.microphone = updatedPermission
@@ -119,6 +125,7 @@ export class UserConsentTracker {
             this._userConsent.camera = updatedPermission
             this._trackedPermissionStatus.camera.forEach((fake) => fake.updateTo(updatedPermission))
           }
+          this.tryToClosePendingPermissionRequests()
         }
         const value = this.permissionPromptFor(this._context, this._pendingPermissionRequests[0], complete)
         deferred.resolve(value)
@@ -149,6 +156,40 @@ export class UserConsentTracker {
   private currentPollCompleted() {
     this.removeCurrentPoll()
     this.startNextPoll()
+  }
+
+  private tryToClosePendingPermissionRequests() {
+    while (this._pendingPermissionRequests.length > 0) {
+      const permissionRequest = this._pendingPermissionRequests[0]
+      if (permissionRequest.deviceKind === 'videoinput') {
+        switch (this._userConsent.camera) {
+          case 'prompt':
+            return
+          case 'denied':
+            this._pendingPermissionRequests.shift()
+            permissionRequest.blocked()
+            break
+          case 'granted':
+            this._pendingPermissionRequests.shift()
+            permissionRequest.granted()
+            break
+        }
+      }
+      if (permissionRequest.deviceKind === 'audioinput') {
+        switch (this._userConsent.microphone) {
+          case 'prompt':
+            return
+          case 'denied':
+            this._pendingPermissionRequests.shift()
+            permissionRequest.blocked()
+            break
+          case 'granted':
+            this._pendingPermissionRequests.shift()
+            permissionRequest.granted()
+            break
+        }
+      }
+    }
   }
 
   private startNextPoll() {
@@ -187,6 +228,11 @@ export class UserConsentTracker {
         }
         if (action === 'block') {
           permissionRequest.blocked()
+          return
+        }
+        if (action === 'dismiss') {
+          //todo 3rd dismiss means blocked
+          permissionRequest.dismissed()
           return
         }
         context.notImplemented.call(`takeAction '${action}'`)

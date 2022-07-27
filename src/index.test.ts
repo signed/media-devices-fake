@@ -11,6 +11,7 @@ import {
 } from './index'
 import './matchers/dom-exception'
 import './matchers/to-include-video-track'
+import './matchers/to-include-audio-track'
 
 let control: MediaDevicesControl
 afterEach(() => {
@@ -53,6 +54,24 @@ describe('MediaDevicesFake', () => {
       const audioPrompt = await control.deviceAccessPrompt()
       expect(audioPrompt.requestedPermissions()).toEqual([RequestedMediaInput.Microphone])
       await expect(audioPromise).rejects
+    })
+
+    test('resolve/reject pending user media request once consent is clear ', async () => {
+      control.attach(anyMicrophone())
+      const navigator = window.navigator
+      const willBeDismissed = navigator.mediaDevices.getUserMedia({ audio: true })
+      const willBeGranted = navigator.mediaDevices.getUserMedia({ audio: true })
+      const noMorePrompt = navigator.mediaDevices.getUserMedia({ audio: true })
+
+      const firstPrompt = await control.deviceAccessPrompt()
+      firstPrompt.takeAction('dismiss')
+      await expect(willBeDismissed).rejects.domException('Permission dismissed')
+
+      const secondPrompt = await control.deviceAccessPrompt()
+      secondPrompt.takeAction('allow')
+      expect(await willBeGranted).toIncludeAudioTrack()
+
+      expect(await noMorePrompt).toIncludeAudioTrack()
     })
 
     test('reject promise with a DomException after blocking access', async () => {

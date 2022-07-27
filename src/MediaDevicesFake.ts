@@ -251,6 +251,9 @@ export class MediaDevicesFake extends EventTarget implements MediaDevices {
       blocked: () => {
         deferred.reject(new DOMException('Permission denied', 'NotAllowedError'))
       },
+      dismissed: () => {
+        deferred.reject(new DOMException('Permission dismissed'))
+      },
     })
     return deferred.promise
   }
