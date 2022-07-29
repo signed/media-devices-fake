@@ -1,5 +1,6 @@
 import { Context } from './context'
 import { LocalListenerPropertySync } from './LocalListenerPropertySync'
+import { MediaDeviceInfoFake } from './MediaDeviceInfoFake'
 import { uuidV4 } from './uuid'
 
 type MediaStreamTrackEventListener = (this: MediaStreamTrack, ev: Event) => any
@@ -11,15 +12,26 @@ export interface MediaStreamTrackProperties {
   enabled: MediaStreamTrack['enabled']
   kind: TrackKind
   label: string
+  groupId: string
+  deviceId: string
   constraints: MediaTrackConstraints
 }
 
 export const initialMediaStreamTrackProperties = (
-  label: string,
+  device: MediaDeviceInfoFake,
   kind: TrackKind,
   constraints: MediaTrackConstraints,
 ): MediaStreamTrackProperties => {
-  return { id: uuidV4(), readyState: 'live', enabled: true, kind, label, constraints }
+  return {
+    id: uuidV4(),
+    readyState: 'live',
+    enabled: true,
+    kind,
+    label: device.label,
+    groupId: device.groupId,
+    deviceId: device.deviceId,
+    constraints,
+  }
 }
 
 export type TrackTerminatedListener = (mediaStreamTrack: MediaStreamTrackFake) => void
@@ -187,7 +199,31 @@ export class MediaStreamTrackFake extends EventTarget implements MediaStreamTrac
    * Returns a MediaTrackSettings object containing the current values of each of the constrainable properties for the current MediaStreamTrack.
    */
   getSettings(): MediaTrackSettings {
-    this._context.notImplemented.call('MediaStreamTrackFake.getSettings()')
+    const shared = {
+      deviceId: this._properties.deviceId,
+      groupId: this._properties.groupId,
+    }
+    if (this._properties.kind === 'video') {
+      return {
+        ...shared,
+        aspectRatio: 4 / 3,
+        frameRate: 30,
+        resizeMode: 'none',
+      }
+    }
+    if (this._properties.kind === 'audio') {
+      return {
+        ...shared,
+        autoGainControl: true,
+        channelCount: 1,
+        echoCancellation: true,
+        latency: 0.01,
+        noiseSuppression: true,
+        sampleRate: 48000,
+        sampleSize: 16,
+      }
+    }
+    return shared
   }
 
   /**

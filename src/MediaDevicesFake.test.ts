@@ -76,6 +76,41 @@ describe('attach device', () => {
       fake.attach(two)
       expect(await fake.enumerateDevices()).toHaveLength(2)
     })
+
+    describe('return basic partially hard coded media track settings', () => {
+      test('for a camera', async () => {
+        const camera = anyDevice({ groupId: 'camera group id', deviceId: 'camera device id', kind: 'videoinput' })
+        fake.attach(camera)
+        const mediaStream = await fake.getUserMedia({ video: true })
+        const settings = mediaStream.getVideoTracks()[0].getSettings()
+        expect(settings.deviceId).toEqual('camera device id')
+        expect(settings.groupId).toEqual('camera group id')
+        // the following ones are hard coded for now
+        expect(settings.aspectRatio).toEqual(4 / 3)
+        expect(settings.frameRate).toEqual(30)
+        expect(settings.resizeMode).toEqual('none')
+      })
+      test('for a microphone', async () => {
+        const microphone = anyDevice({
+          groupId: 'microphone group id',
+          deviceId: 'microphone device id',
+          kind: 'audioinput',
+        })
+        fake.attach(microphone)
+        const mediaStream = await fake.getUserMedia({ audio: true })
+        const settings = mediaStream.getAudioTracks()[0].getSettings()
+        expect(settings.deviceId).toEqual('microphone device id')
+        expect(settings.groupId).toEqual('microphone group id')
+        // the following ones are hard coded for now
+        expect(settings.autoGainControl).toEqual(true)
+        expect(settings.channelCount).toEqual(1)
+        expect(settings.echoCancellation).toEqual(true)
+        expect(settings.latency).toEqual(0.01)
+        expect(settings.noiseSuppression).toEqual(true)
+        expect(settings.sampleRate).toEqual(48000)
+        expect(settings.sampleSize).toEqual(16)
+      })
+    })
   })
 
   describe('remove', () => {

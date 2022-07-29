@@ -147,7 +147,7 @@ const tryToOpenAStreamFor = (
   const constraintObject = typeof mediaTrackConstraints === 'boolean' ? {} : deepClone(mediaTrackConstraints)
   const mediaTrack = new MediaStreamTrackFake(
     context,
-    initialMediaStreamTrackProperties(selectedDevice.label, trackKind, constraintObject),
+    initialMediaStreamTrackProperties(selectedDevice, trackKind, constraintObject),
   )
   openMediaTracks.track(selectedDevice, mediaTrack)
   mediaTrack.onTerminated = (track) => openMediaTracks.remove(track)

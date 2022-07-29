@@ -1,6 +1,7 @@
 import './matchers/to-be-uuid'
 import { anyContext } from './ContextMother'
 import { allAccessGranted, anyDevice, forgeMediaDevices } from './index'
+import { MediaDeviceInfoFake } from './MediaDeviceInfoFake'
 import { initialMediaStreamTrackProperties, MediaStreamTrackFake } from './MediaStreamTrackFake'
 import { anyTrackKind } from './MediaStreamTrackMother'
 
@@ -8,7 +9,10 @@ describe('MediaStreamTrackFake', () => {
   let track: MediaStreamTrackFake
 
   beforeEach(() => {
-    track = new MediaStreamTrackFake(anyContext(), initialMediaStreamTrackProperties('The Label', anyTrackKind(), {}))
+    const deviceDescription = anyDevice({ label: 'The Label' })
+    const context = anyContext()
+    const device = new MediaDeviceInfoFake(context, deviceDescription)
+    track = new MediaStreamTrackFake(context, initialMediaStreamTrackProperties(device, anyTrackKind(), {}))
   })
 
   test('enabled by default', () => {
