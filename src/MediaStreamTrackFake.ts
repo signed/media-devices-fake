@@ -106,7 +106,6 @@ export class MediaStreamTrackFake extends EventTarget implements MediaStreamTrac
    * https://w3c.github.io/mediacapture-main/#track-muted
    */
   get muted(): boolean {
-    //
     return false
   }
 
