@@ -1,5 +1,5 @@
-import { NotImplemented } from './not-implemented'
-import { Reporter } from './reporter'
+import { NotImplemented } from './not-implemented.js'
+import { Reporter } from './reporter.js'
 
 export interface Context {
   readonly notImplemented: NotImplemented

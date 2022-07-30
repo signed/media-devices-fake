@@ -1,6 +1,6 @@
-import { Context } from './context'
-import { Deferred } from './Deferred'
-import { PermissionStatusFake } from './permissions/PermissionStatusFake'
+import { Context } from './context.js'
+import { Deferred } from './Deferred.js'
+import { PermissionStatusFake } from './permissions/PermissionStatusFake.js'
 
 export enum RequestedMediaInput {
   Microphone = 'Microphone',

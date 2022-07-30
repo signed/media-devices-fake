@@ -1,12 +1,12 @@
-import { anyContext } from './ContextMother'
-import { anyDevice } from './DeviceMother'
-import { MediaDeviceInfoFake } from './MediaDeviceInfoFake'
+import { anyContext } from './ContextMother.js'
+import { anyDevice } from './DeviceMother.js'
+import { MediaDeviceInfoFake } from './MediaDeviceInfoFake.js'
 import {
   initialMediaStreamTrackProperties,
   MediaStreamTrackFake,
   MediaStreamTrackProperties,
   TrackKind,
-} from './MediaStreamTrackFake'
+} from './MediaStreamTrackFake.js'
 
 export const anyTrackKind = (): TrackKind => 'video'
 

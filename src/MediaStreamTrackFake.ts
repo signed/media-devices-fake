@@ -1,7 +1,7 @@
-import { Context } from './context'
-import { LocalListenerPropertySync } from './LocalListenerPropertySync'
-import { MediaDeviceInfoFake } from './MediaDeviceInfoFake'
-import { uuidV4 } from './uuid'
+import { Context } from './context.js'
+import { LocalListenerPropertySync } from './LocalListenerPropertySync.js'
+import { MediaDeviceInfoFake } from './MediaDeviceInfoFake.js'
+import { uuidV4 } from './uuid.js'
 
 type MediaStreamTrackEventListener = (this: MediaStreamTrack, ev: Event) => any
 export type TrackKind = 'audio' | 'video'

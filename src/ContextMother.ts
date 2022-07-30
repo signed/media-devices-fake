@@ -1,6 +1,6 @@
-import { Context } from './context'
-import { ThrowingNotImplemented } from './not-implemented'
-import { NoopReporter } from './reporter'
+import { Context } from './context.js'
+import { ThrowingNotImplemented } from './not-implemented.js'
+import { NoopReporter } from './reporter.js'
 
 export const anyContext = (): Context => {
   const reporter = new NoopReporter()

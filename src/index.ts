@@ -1,13 +1,13 @@
-export { MediaDeviceDescription } from './MediaDeviceDescription'
+export { type MediaDeviceDescription } from './MediaDeviceDescription'
 export { anyMicrophone, anyCamera, anyDevice, anySpeaker } from './DeviceMother'
-export { PermissionPrompt, PermissionPromptAction, RequestedMediaInput } from './UserConsentTracker'
-import { Context } from './context'
-import { MediaDeviceDescription } from './MediaDeviceDescription'
-import { MediaDevicesFake } from './MediaDevicesFake'
-import { NotImplemented, ThrowingNotImplemented } from './not-implemented'
-import { OpenMediaTracks } from './OpenMediaTracks'
-import { PermissionsFake } from './permissions/PermissionsFake'
-import { DefaultReporter, NoopReporter, Reporter } from './reporter'
+export { type PermissionPrompt, type PermissionPromptAction, RequestedMediaInput } from './UserConsentTracker'
+import { type Context } from './context.js'
+import { type MediaDeviceDescription } from './MediaDeviceDescription.js'
+import { MediaDevicesFake } from './MediaDevicesFake.js'
+import { type NotImplemented, ThrowingNotImplemented } from './not-implemented.js'
+import { OpenMediaTracks } from './OpenMediaTracks.js'
+import { PermissionsFake } from './permissions/PermissionsFake.js'
+import { DefaultReporter, NoopReporter, type Reporter } from './reporter.js'
 import {
   allConstraintsFalse,
   existingDevice,
@@ -15,8 +15,8 @@ import {
   passUndefined,
   requestedDeviceTypeNotAttached,
   scenarios as all,
-} from './Scenarios'
-import { PermissionPrompt, UserConsent, UserConsentTracker } from './UserConsentTracker'
+} from './Scenarios.js'
+import { type PermissionPrompt, type UserConsent, UserConsentTracker } from './UserConsentTracker.js'
 
 export type LogLevel = 'off' | 'all'
 
@@ -173,7 +173,7 @@ export const forgeMediaDevices = (initial: InitialSetup = {}): MediaDevicesContr
 }
 
 // todo testrig should be moved here
-export { MediaStreamCheckResult, Scenario } from './Scenarios'
+export { type MediaStreamCheckResult, type Scenario } from './Scenarios'
 
 export const scenarios = {
   all,

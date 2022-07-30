@@ -1,9 +1,9 @@
-import './matchers/to-be-uuid'
-import { anyContext } from './ContextMother'
-import { allAccessGranted, anyDevice, forgeMediaDevices } from './index'
-import { MediaDeviceInfoFake } from './MediaDeviceInfoFake'
-import { initialMediaStreamTrackProperties, MediaStreamTrackFake } from './MediaStreamTrackFake'
-import { anyTrackKind } from './MediaStreamTrackMother'
+import './matchers/to-be-uuid.js'
+import { anyContext } from './ContextMother.js'
+import { allAccessGranted, anyDevice, forgeMediaDevices } from './index.js'
+import { MediaDeviceInfoFake } from './MediaDeviceInfoFake.js'
+import { initialMediaStreamTrackProperties, MediaStreamTrackFake } from './MediaStreamTrackFake.js'
+import { anyTrackKind } from './MediaStreamTrackMother.js'
 
 describe('MediaStreamTrackFake', () => {
   let track: MediaStreamTrackFake

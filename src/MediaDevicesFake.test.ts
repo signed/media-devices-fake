@@ -1,19 +1,19 @@
 import 'jest-extended'
-import { anyContext } from './ContextMother'
-import { anyCamera, anyDevice, anyMicrophone, anySpeaker } from './DeviceMother'
-import './matchers/dom-exception'
-import './matchers/to-be-uuid'
-import './matchers/to-include-video-track'
-import { MediaDevicesFake } from './MediaDevicesFake'
-import { OpenMediaTracks } from './OpenMediaTracks'
+import { anyContext } from './ContextMother.js'
+import { anyCamera, anyDevice, anyMicrophone, anySpeaker } from './DeviceMother.js'
+import './matchers/dom-exception.js'
+import './matchers/to-be-uuid.js'
+import './matchers/to-include-video-track.js'
+import { MediaDevicesFake } from './MediaDevicesFake.js'
+import { OpenMediaTracks } from './OpenMediaTracks.js'
 import {
   allConstraintsFalse,
   noDeviceWithDeviceId,
   passUndefined,
   requestedDeviceTypeNotAttached,
   Scenario,
-} from './Scenarios'
-import { UserConsent, UserConsentTracker } from './UserConsentTracker'
+} from './Scenarios.js'
+import { UserConsent, UserConsentTracker } from './UserConsentTracker.js'
 
 describe('attach device', () => {
   let fake: MediaDevicesFake

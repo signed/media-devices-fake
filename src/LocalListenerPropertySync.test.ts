@@ -1,4 +1,4 @@
-import { LocalListenerPropertySync } from './LocalListenerPropertySync'
+import { LocalListenerPropertySync } from './LocalListenerPropertySync.js'
 
 let target: EventTarget
 let sync: LocalListenerPropertySync<EventListener>

@@ -1,4 +1,4 @@
-import { Reporter } from './reporter'
+import { Reporter } from './reporter.js'
 
 export interface NotImplemented {
   call(message: string): never

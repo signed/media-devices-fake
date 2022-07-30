@@ -1,6 +1,6 @@
-import { anyContext } from './ContextMother'
-import { MediaStreamFake, mediaStreamId } from './MediaStreamFake'
-import { anyMediaStreamTrack } from './MediaStreamTrackMother'
+import { anyContext } from './ContextMother.js'
+import { MediaStreamFake, mediaStreamId } from './MediaStreamFake.js'
+import { anyMediaStreamTrack } from './MediaStreamTrackMother.js'
 
 describe('MediaStreamFake', () => {
   test('create a new one', () => {

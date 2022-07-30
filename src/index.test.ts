@@ -8,10 +8,10 @@ import {
   MediaDevicesControl,
   RequestedMediaInput,
   stillHaveToAskForDeviceAccess,
-} from './index'
-import './matchers/dom-exception'
-import './matchers/to-include-video-track'
-import './matchers/to-include-audio-track'
+} from './index.js'
+import './matchers/dom-exception.js'
+import './matchers/to-include-video-track.js'
+import './matchers/to-include-audio-track.js'
 
 let control: MediaDevicesControl
 afterEach(() => {

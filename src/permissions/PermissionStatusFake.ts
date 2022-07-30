@@ -1,4 +1,4 @@
-import { LocalListenerPropertySync } from '../LocalListenerPropertySync'
+import { LocalListenerPropertySync } from '../LocalListenerPropertySync.js'
 
 type OnChangeListener = (this: PermissionStatus, ev: Event) => any
 

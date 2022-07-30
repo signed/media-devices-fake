@@ -1,5 +1,5 @@
-import { Context } from './context'
-import { MediaStreamTrackFake } from './MediaStreamTrackFake'
+import { Context } from './context.js'
+import { MediaStreamTrackFake } from './MediaStreamTrackFake.js'
 
 export type MediaStreamEventListener = (this: MediaStream, ev: MediaStreamTrackEvent) => any
 
