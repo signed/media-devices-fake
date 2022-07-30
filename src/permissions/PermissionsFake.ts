@@ -1,5 +1,5 @@
-import { Context } from '../context.js'
-import { UserConsentTracker } from '../UserConsentTracker.js'
+import type { Context } from '../context.js'
+import type { UserConsentTracker } from '../UserConsentTracker.js'
 
 export class PermissionsFake implements Permissions {
   constructor(private readonly context: Context, private readonly consentTracker: UserConsentTracker) {}

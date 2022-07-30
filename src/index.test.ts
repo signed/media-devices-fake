@@ -1,3 +1,5 @@
+import type {
+  MediaDevicesControl} from './index.js';
 import {
   allAccessGranted,
   allAccessDenied,
@@ -5,7 +7,6 @@ import {
   anyDevice,
   anyMicrophone,
   forgeMediaDevices,
-  MediaDevicesControl,
   RequestedMediaInput,
   stillHaveToAskForDeviceAccess,
 } from './index.js'

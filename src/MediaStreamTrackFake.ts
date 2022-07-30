@@ -1,6 +1,6 @@
-import { Context } from './context.js'
+import type { Context } from './context.js'
 import { LocalListenerPropertySync } from './LocalListenerPropertySync.js'
-import { MediaDeviceInfoFake } from './MediaDeviceInfoFake.js'
+import type { MediaDeviceInfoFake } from './MediaDeviceInfoFake.js'
 import { uuidV4 } from './uuid.js'
 
 type MediaStreamTrackEventListener = (this: MediaStreamTrack, ev: Event) => any

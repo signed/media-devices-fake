@@ -1,5 +1,5 @@
-import { Context } from './context.js'
-import { MediaDeviceDescription } from './MediaDeviceDescription.js'
+import type { Context } from './context.js'
+import type { MediaDeviceDescription } from './MediaDeviceDescription.js'
 
 export class MediaDeviceInfoFake implements MediaDeviceInfo {
   constructor(private readonly _context: Context, private readonly mediaDeviceDescription: MediaDeviceDescription) {}

@@ -6,14 +6,16 @@ import './matchers/to-be-uuid.js'
 import './matchers/to-include-video-track.js'
 import { MediaDevicesFake } from './MediaDevicesFake.js'
 import { OpenMediaTracks } from './OpenMediaTracks.js'
+import type {
+  Scenario} from './Scenarios.js';
 import {
   allConstraintsFalse,
   noDeviceWithDeviceId,
   passUndefined,
-  requestedDeviceTypeNotAttached,
-  Scenario,
+  requestedDeviceTypeNotAttached
 } from './Scenarios.js'
-import { UserConsent, UserConsentTracker } from './UserConsentTracker.js'
+import type { UserConsent} from './UserConsentTracker.js';
+import { UserConsentTracker } from './UserConsentTracker.js'
 
 describe('attach device', () => {
   let fake: MediaDevicesFake

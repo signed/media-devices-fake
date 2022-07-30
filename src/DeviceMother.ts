@@ -1,4 +1,4 @@
-import { MediaDeviceDescription } from './MediaDeviceDescription.js'
+import type { MediaDeviceDescription } from './MediaDeviceDescription.js'
 
 export const anyDevice = (override: Partial<MediaDeviceDescription> = {}): MediaDeviceDescription => {
   return {

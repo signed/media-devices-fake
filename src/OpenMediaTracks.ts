@@ -1,6 +1,6 @@
-import { MediaDeviceDescription } from './MediaDeviceDescription.js'
-import { MediaDeviceInfoFake } from './MediaDeviceInfoFake.js'
-import { MediaStreamTrackFake } from './MediaStreamTrackFake.js'
+import type { MediaDeviceDescription } from './MediaDeviceDescription.js'
+import type { MediaDeviceInfoFake } from './MediaDeviceInfoFake.js'
+import type { MediaStreamTrackFake } from './MediaStreamTrackFake.js'
 
 type Entry = { mediaDevice: MediaDeviceInfoFake; mediaTrack: MediaStreamTrackFake }
 

@@ -1,4 +1,4 @@
-import { Context } from './context.js'
+import type { Context } from './context.js'
 import { ThrowingNotImplemented } from './not-implemented.js'
 import { NoopReporter } from './reporter.js'
 

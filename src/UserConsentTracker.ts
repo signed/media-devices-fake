@@ -1,4 +1,4 @@
-import { Context } from './context.js'
+import type { Context } from './context.js'
 import { Deferred } from './Deferred.js'
 import { PermissionStatusFake } from './permissions/PermissionStatusFake.js'
 

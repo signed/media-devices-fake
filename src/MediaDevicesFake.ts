@@ -1,12 +1,13 @@
-import { Context } from './context.js'
+import type { Context } from './context.js'
 import { Deferred } from './Deferred.js'
 import { LocalListenerPropertySync } from './LocalListenerPropertySync.js'
-import { MediaDeviceDescription } from './MediaDeviceDescription.js'
+import type { MediaDeviceDescription } from './MediaDeviceDescription.js'
 import { MediaDeviceInfoFake } from './MediaDeviceInfoFake.js'
 import { MediaStreamFake, mediaStreamId } from './MediaStreamFake.js'
-import { initialMediaStreamTrackProperties, MediaStreamTrackFake, TrackKind } from './MediaStreamTrackFake.js'
-import { OpenMediaTracks } from './OpenMediaTracks.js'
-import { UserConsentTracker } from './UserConsentTracker.js'
+import type { TrackKind } from './MediaStreamTrackFake.js';
+import { initialMediaStreamTrackProperties, MediaStreamTrackFake } from './MediaStreamTrackFake.js'
+import type { OpenMediaTracks } from './OpenMediaTracks.js'
+import type { UserConsentTracker } from './UserConsentTracker.js'
 
 type DeviceChangeListener = (this: MediaDevices, ev: Event) => any
 const descriptionMatching = (description: MediaDeviceDescription) => (device: MediaDeviceDescription) =>

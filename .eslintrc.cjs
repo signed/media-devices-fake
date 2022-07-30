@@ -1,9 +1,12 @@
 // https://typescript-eslint.io/docs/
 module.exports = {
-  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended'],
+  root: true,
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint'],
-  root: true,
+  rules: {
+    '@typescript-eslint/consistent-type-imports': ['error'],
+  },
+  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended'],
   overrides: [
     {
       files: ['*.ts'],
