@@ -2,6 +2,7 @@ export {}
 
 declare global {
   namespace jest {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     interface Matchers<R> {
       domException(message?: string, name?: string): CustomMatcherResult
     }
@@ -9,7 +10,7 @@ declare global {
 }
 
 expect.extend({
-  domException(received: DOMException, msg: string = '', name: string = 'Error'): jest.CustomMatcherResult {
+  domException(received: DOMException, msg = '', name = 'Error'): jest.CustomMatcherResult {
     const constructor = Object.getPrototypeOf(received).constructor.name
     const passType = received instanceof DOMException
     const passMessage = received.message === msg

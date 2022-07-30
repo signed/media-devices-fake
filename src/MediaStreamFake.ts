@@ -58,9 +58,9 @@ export class MediaStreamFake extends EventTarget implements MediaStream {
   /**
    * Stores a copy of the MediaStreamTrack given as argument.
    * If the track has already been added to the MediaStream object, nothing happens.
-   * @param track
+   * @param _track
    */
-  addTrack(track: MediaStreamTrack): void {
+  addTrack(_track: MediaStreamTrack): void {
     this._context.notImplemented.call('MediaStreamFake.addTrack()')
   }
 

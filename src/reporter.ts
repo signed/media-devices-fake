@@ -5,11 +5,11 @@ export interface Reporter {
 }
 
 export class NoopReporter implements Reporter {
-  notImplemented(message: string): void {
+  notImplemented(_message: string): void {
     // do nothing
   }
 
-  report(producer: () => string[]): void {
+  report(_producer: () => string[]): void {
     // do nothing
   }
 }

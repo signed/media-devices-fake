@@ -91,11 +91,6 @@ export class MediaStreamTrackFake extends EventTarget implements MediaStreamTrac
     return this._properties.id
   }
 
-  get isolated(): boolean {
-    this._context.notImplemented.call('MediaStreamTrackFake.isolated()')
-    throw 'unreachable'
-  }
-
   /**
    * Returns a DOMString set to `"audio"` if the track is an audio track and to `"video"`, if it is a video track.
    * It doesn't change if the track is deassociated from its source.
@@ -161,9 +156,9 @@ export class MediaStreamTrackFake extends EventTarget implements MediaStreamTrac
    * For example, you may prefer high-density video but require that the frame rate be a little low to help keep the data rate low enough not overtax the network.
    * Constraints can also specify ideal and/or acceptable sizes or ranges of sizes.
    *
-   * @param constraints
+   * @param _constraints
    */
-  applyConstraints(constraints?: MediaTrackConstraints): Promise<void> {
+  applyConstraints(_constraints?: MediaTrackConstraints): Promise<void> {
     this._context.notImplemented.call('MediaStreamTrackFake.applyConstraints()')
   }
 
