@@ -1,6 +1,6 @@
-export { type MediaDeviceDescription } from './MediaDeviceDescription'
-export { anyMicrophone, anyCamera, anyDevice, anySpeaker } from './DeviceMother'
-export { type PermissionPrompt, type PermissionPromptAction, RequestedMediaInput } from './UserConsentTracker'
+export { type MediaDeviceDescription } from './MediaDeviceDescription.js'
+export { anyMicrophone, anyCamera, anyDevice, anySpeaker } from './DeviceMother.js'
+export { type PermissionPrompt, type PermissionPromptAction, RequestedMediaInput } from './UserConsentTracker.js'
 import { type Context } from './context.js'
 import { type MediaDeviceDescription } from './MediaDeviceDescription.js'
 import { MediaDevicesFake } from './MediaDevicesFake.js'
@@ -173,7 +173,7 @@ export const forgeMediaDevices = (initial: InitialSetup = {}): MediaDevicesContr
 }
 
 // todo testrig should be moved here
-export { type MediaStreamCheckResult, type Scenario } from './Scenarios'
+export { type MediaStreamCheckResult, type Scenario } from './Scenarios.js'
 
 export const scenarios = {
   all,

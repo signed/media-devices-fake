@@ -1,5 +1,4 @@
-import type {
-  MediaDevicesControl} from './index.js';
+import type { MediaDevicesControl } from './index.js'
 import {
   allAccessGranted,
   allAccessDenied,

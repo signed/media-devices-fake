@@ -4,7 +4,7 @@ import { LocalListenerPropertySync } from './LocalListenerPropertySync.js'
 import type { MediaDeviceDescription } from './MediaDeviceDescription.js'
 import { MediaDeviceInfoFake } from './MediaDeviceInfoFake.js'
 import { MediaStreamFake, mediaStreamId } from './MediaStreamFake.js'
-import type { TrackKind } from './MediaStreamTrackFake.js';
+import type { TrackKind } from './MediaStreamTrackFake.js'
 import { initialMediaStreamTrackProperties, MediaStreamTrackFake } from './MediaStreamTrackFake.js'
 import type { OpenMediaTracks } from './OpenMediaTracks.js'
 import type { UserConsentTracker } from './UserConsentTracker.js'

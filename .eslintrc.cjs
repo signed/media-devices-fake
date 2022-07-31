@@ -13,10 +13,9 @@ module.exports = {
       rules: {
         '@typescript-eslint/no-empty-function': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
-        '@typescript-eslint/no-unused-vars': ['error', {argsIgnorePattern: '^_'}],
-        '@typescript-eslint/no-namespace': ['error', {allowDeclarations: true}],
+        '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+        '@typescript-eslint/no-namespace': ['error', { allowDeclarations: true }],
       },
     },
   ],
 }
-
