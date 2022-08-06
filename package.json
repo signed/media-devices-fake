@@ -1,6 +1,6 @@
 {
   "name": "@fakes/media-devices",
-  "description": "A interactive fake implementation of MediaDevices interface in the browser for testing",
+  "description": "A fake implementation of the MediaDevices interface in the browser for testing",
   "keywords": [
     "navigator",
     "mediaDevices",
