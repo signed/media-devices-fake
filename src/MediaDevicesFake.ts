@@ -208,7 +208,7 @@ export class MediaDevicesFake extends EventTarget implements MediaDevices {
   }
 
   //https://w3c.github.io/mediacapture-screen-share/#dom-mediadevices-getdisplaymedia
-  getDisplayMedia(_constraints?: DisplayMediaStreamConstraints): Promise<MediaStream> {
+  getDisplayMedia(_constraints?: MediaStreamConstraints): Promise<MediaStream> {
     this._context.notImplemented.call('MediaDevicesFake.getDisplayMedia() is not implemented')
   }
 
